@@ -1,7 +1,17 @@
+# from parsel import Selector
+import time
+import requests
+
+
 # Requisito 1
 def fetch(url):
     try:
-        
+        response = requests.get(url, timeout=2)
+        time.sleep(1)
+        if response.status_code == 200:
+            return response.text
+    except requests.ReadTimeout:
+        return None
 
 
 # Requisito 2
