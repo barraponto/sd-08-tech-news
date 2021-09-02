@@ -1,6 +1,7 @@
 import requests
 from parsel import Selector
 import time
+from tech_news.database import (create_news)
 
 
 # Requisito 1
@@ -38,11 +39,17 @@ def scrape_noticia(html_content):
     news["timestamp"] = timestamp
 
     writer = selector.css(".tec--author__info__link::text").get()
-    news["writer"] = writer.strip()
+    if writer is None:
+        news["writer"] = None
+    else:
+        news["writer"] = writer.strip()
 
     shares_count = selector.css(".tec--toolbar__item::text").getall()
-    shares_count = int(shares_count[0].split()[0])
-    news["shares_count"] = shares_count
+    if shares_count is None or len(shares_count) == 0:
+        news["shares_count"] = 0
+    else:
+        shares_count = int(shares_count[0].split()[0])
+        news["shares_count"] = shares_count
 
     comments_count = selector.css("#js-comments-btn::attr(data-count)").get()
     if comments_count is None:
@@ -73,7 +80,6 @@ def scrape_noticia(html_content):
 def scrape_novidades(html_content):
     selector = Selector(text=html_content)
     news = selector.css("h3 .tec--card__title__link::attr(href)").getall()
-    print(news)
     return news
 
 
@@ -86,4 +92,26 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    BASE_URL = "https://www.tecmundo.com.br/novidades"
+
+    page_novidades = fetch(BASE_URL)
+    noticias = []
+
+    while len(noticias) < amount:
+        novidades_links = scrape_novidades(page_novidades)
+        for link in novidades_links:
+            if len(noticias) < amount:
+                actual_noticia = fetch(link)
+                noticia_html_content = scrape_noticia(actual_noticia)
+                print()
+                print(link)
+                print(noticia_html_content)
+                print()
+                noticias.append(noticia_html_content)
+
+        if len(noticias) < amount:
+            next_link = scrape_next_page_link(page_novidades)
+            page_novidades = fetch(next_link)
+
+    create_news(noticias)
+    return noticias
