@@ -103,10 +103,6 @@ def get_tech_news(amount):
             if len(noticias) < amount:
                 actual_noticia = fetch(link)
                 noticia_html_content = scrape_noticia(actual_noticia)
-                print()
-                print(link)
-                print(noticia_html_content)
-                print()
                 noticias.append(noticia_html_content)
 
         if len(noticias) < amount:

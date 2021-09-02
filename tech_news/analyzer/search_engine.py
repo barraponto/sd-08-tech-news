@@ -1,6 +1,14 @@
+from tech_news.database import search_news
+
+
 # Requisito 6
 def search_by_title(title):
-    """Seu código deve vir aqui"""
+    mongo_query = {"title": {"$regex": title, "$options": "i"}}
+    news = search_news(mongo_query)
+    tuple_news = [
+        (actual_news["title"], actual_news["url"]) for actual_news in news
+    ]
+    return tuple_news
 
 
 # Requisito 7
