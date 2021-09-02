@@ -66,18 +66,24 @@ def scrape_noticia(html_content):
 # Requisito 3
 def scrape_novidades(html_content):
     selector = Selector(text=html_content)
-    news_list = selector.css("h3 a.tec--card__title__link::attr(href)").getall()
+    news_list = selector.css(
+        "h3 a.tec--card__title__link::attr(href)"
+    ).getall()
     return news_list
-
-
-# teste = requests.get('https://www.tecmundo.com.br/novidades')
-# result = scrape_novidades('oi')
-# print(result)
 
 
 # Requisito 4
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    next_page_url = selector.css(
+        "a.tec--btn.tec--btn--lg.tec--btn--primary::attr(href)"
+    ).get()
+    return next_page_url
+
+
+teste = requests.get('https://www.tecmundo.com.br/novidades')
+result = scrape_next_page_link(teste.text)
+print(result)
 
 
 # Requisito 5
