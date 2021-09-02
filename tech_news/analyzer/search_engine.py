@@ -2,6 +2,9 @@ from datetime import datetime
 from tech_news.database import search_news
 
 
+# source for datetime:
+# https://pt.stackoverflow.com/questions/377579/valida%C3%A7%C3%A3o-de-data-testes-com-python
+
 # Requisito 6
 def search_by_title(title):
     # source: https://docs.mongodb.com/manual/reference/operator/query/regex/
