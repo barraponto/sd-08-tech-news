@@ -32,22 +32,24 @@ def scrape_noticia(html_content):
     url = selector.css("link[rel='canonical']::attr(href)").get()
     news["url"] = url
 
-    title = selector.css(".tec--article__header__title::text").get()
+    title = selector.css("#js-article-title::text").get()
     news["title"] = title
 
-    timestamp = selector.css("#js-article-date::attr(datetime)").get()
+    timestamp = selector.css("#js-article-date::attr(datetime)").get().strip()
     news["timestamp"] = timestamp
 
     writer = selector.css(".tec--author__info__link::text").get()
-    if writer is None:
-        news["writer"] = None
-    else:
+    print(writer)
+    if writer:
         news["writer"] = writer.strip()
+    else:
+        news["writer"] = None
 
-    shares_count = selector.css(".tec--toolbar__item::text").getall()
-    if shares_count is None or len(shares_count) == 0:
+    shares_count = selector.css(".tec--toolbar__item::text").get()
+    if shares_count is None:
         news["shares_count"] = 0
     else:
+        shares_count = selector.css(".tec--toolbar__item::text").getall()
         shares_count = int(shares_count[0].split()[0])
         news["shares_count"] = shares_count
 
@@ -110,4 +112,5 @@ def get_tech_news(amount):
             page_novidades = fetch(next_link)
 
     create_news(noticias)
+    print(f"tamanho: {len(noticias)}")
     return noticias
