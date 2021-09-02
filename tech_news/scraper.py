@@ -1,5 +1,6 @@
 from time import sleep
 import requests
+from parsel import Selector
 
 
 # Requisito 1
@@ -18,6 +19,27 @@ def fetch(url):
 # Requisito 2
 def scrape_noticia(html_content):
     """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    return {
+        "url": selector.css('meta[property="og:url"]::attr("content")').get(),
+        "title": selector.css(".tec--article__header__title::text").get(),
+        "timestamp": selector.css(
+            ".tec--timestamp__item > time::attr(datetime)"
+        ).get(),
+        "writer": selector.css(".tec--author__info__link::text").get().strip(),
+        "shares_count": selector.css(".tec--toolbar__item::text")
+        .getall()[0]
+        .split(" ")[0]
+        or 0,
+        # "comments_count": selector.css(".tec--toolbar__item::text")
+        # .getall()[1] or 0
+        # .split(" ")[0],
+        "summary": "".join(
+            selector.css(".tec--article__body > p *::text").getall()
+        ).strip(),
+        "sources": selector.css(".z--mb-16 > div > a::text").getall(),
+        "categories": selector.css("div#js-categories a::text").getall()
+    }
 
 
 # Requisito 3
