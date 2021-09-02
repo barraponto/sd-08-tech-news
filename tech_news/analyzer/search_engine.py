@@ -36,9 +36,19 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    mongo_query = {"sources": {"$regex": source, "$options": "i"}}
+    news = search_news(mongo_query)
+    tuple_news = [
+        (actual_news["title"], actual_news["url"]) for actual_news in news
+    ]
+    return tuple_news
 
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    mongo_query = {"categories": {"$regex": category, "$options": "i"}}
+    news = search_news(mongo_query)
+    tuple_news = [
+        (actual_news["title"], actual_news["url"]) for actual_news in news
+    ]
+    return tuple_news
