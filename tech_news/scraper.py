@@ -2,6 +2,8 @@ import requests
 import time
 from parsel import Selector
 import re
+import json
+from bs4 import BeautifulSoup
 
 
 def fetch(url):
@@ -64,7 +66,17 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    if html_content == "":
+        return []
+    selector = Selector(html_content)
+    urls = selector.css("body > script:nth-child(6)").get()
+    soup = BeautifulSoup(urls, 'html.parser')
+    res = soup.find('script')
+    json_object = json.loads(res.contents[0])
+    array_urls = []
+    for item in json_object['itemListElement']:
+        array_urls.append(item['url'])
+    return array_urls
 
 
 # Requisito 4
