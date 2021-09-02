@@ -41,6 +41,7 @@ def scrape_next_page_link(html_content):
 
     return next_page
 
+
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
