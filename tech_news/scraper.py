@@ -1,5 +1,7 @@
 import requests
 import time
+from parsel import Selector
+import re
 
 
 def fetch(url):
@@ -13,9 +15,51 @@ def fetch(url):
         return None
 
 
+def remove_spaces(text):
+    result = []
+    for i in text:
+        j = i.strip()
+        result.append(j)
+    return result
+
+
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+    title = selector.css("h1::text").get()
+    url = selector.css('head > link:nth-child(26)::attr(href)').get()
+    timestamp = selector.css('#js-article-date::attr(datetime)').get()
+    writer = selector.xpath(
+        '//*[@id="js-author-bar"]/div/p[1]/a/text()'
+        ).get(default=None)
+    shares_count = selector.css(
+        '#js-author-bar > nav > div:nth-child(1)::text'
+        ).get(default='0').strip()
+    comments_count = selector.css(
+        '#js-comments-btn::attr(data-count)'
+        ).get(default='0')
+    summary = selector.xpath(
+        '//*[@id="js-main"]/div[1]/article/div[3]/div[2]/p[1]/'
+        'descendant-or-self::*/text()'
+        ).getall()
+    r_sources = selector.xpath(
+        '//*[@id="js-main"]/div[1]/article/div[3]/div[4]/div/a/text()'
+        ).getall()
+    sources = remove_spaces(r_sources)
+    r_categories = selector.xpath('//*[@id="js-categories"]/a/text()').getall()
+    categories = remove_spaces(r_categories)
+    dit = {
+        "url": url,
+        "title": title,
+        "timestamp": timestamp,
+        "writer": writer.strip(),
+        "shares_count": int(re.search(r'\d+', shares_count).group()),
+        "comments_count": int(comments_count),
+        "summary": ''.join(summary),
+        "sources": sources,
+        "categories": categories,
+    }
+    return dit
 
 
 # Requisito 3
