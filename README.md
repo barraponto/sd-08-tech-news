@@ -1,3 +1,7 @@
+<!-- 
+
+ -->
+
 ### Termos e acordos
 
 Ao iniciar este projeto, você concorda com as diretrizes do Código de Ética e Conduta e do
@@ -29,21 +33,39 @@ Aqui você vai encontrar os detalhes de como estruturar o desenvolvimento do seu
   - [MongoDB](#mongodb)
 
 Lista de requisitos:
-- [Requisitos obrigatórios](#requisitos-obrigatórios)
-  - [1 - Crie a função fetch](#1---crie-a-função-fetch)
-  - [2 - Crie a função scrape_noticia](#2---crie-a-função-scrape_noticia)
-  - [3 - Crie a função scrape_novidades](#3---crie-a-função-scrape_novidades)
-  - [4 - Crie a função scrape_next_page_link](#4---crie-a-função-scrape_next_page_link)
-  - [5 - Crie a função get_tech_news para obter as notícias!](#5---crie-a-função-get_tech_news-para-obter-as-notícias)
-  - [6 - Crie a função search_by_title](#6---crie-a-função-search_by_title)
-  - [7 - Crie a função search_by_date](#7---crie-a-função-search_by_date)
-  - [8 - Crie a função search_by_source,](#8---crie-a-função-search_by_source)
-  - [9 - Crie a função search_by_category](#9---crie-a-função-search_by_category)
-  - [10 - Crie a função top_5_news](#10---crie-a-função-top_5_news)
-  - [11 - Crie a função top_5_categories](#11---crie-a-função-top_5_categories)
-- [Requisitos bônus](#requisitos-bônus)
-  - [12 - Crie a função analyzer_menu](#12---crie-a-função-analyzer_menu)
-  - [13 - Implemente as funcionalidades do menu](#13---implemente-as-funcionalidades-do-menu)
+- [Boas vindas ao repositório do projeto de Tech News!](#boas-vindas-ao-repositório-do-projeto-de-tech-news)
+- [Sumário](#sumário)
+- [Habilidades](#habilidades)
+- [Entregáveis](#entregáveis)
+  - [O que deverá ser desenvolvido](#o-que-deverá-ser-desenvolvido)
+  - [Antes de começar a desenvolver:](#antes-de-começar-a-desenvolver)
+  - [Data de Entrega](#data-de-entrega)
+- [Instruções para entregar seu projeto:](#instruções-para-entregar-seu-projeto)
+  - [Durante o desenvolvimento](#durante-o-desenvolvimento)
+  - [- ⚠ Seu projeto não será avaliado com issues no linter, atente-se para manter seu código nos padrões estilo.](#---seu-projeto-não-será-avaliado-com-issues-no-linter-atente-se-para-manter-seu-código-nos-padrões-estilo)
+  - [Depois de terminar o desenvolvimento](#depois-de-terminar-o-desenvolvimento)
+  - [Revisando um pull request](#revisando-um-pull-request)
+  - [Linter](#linter)
+- [Como desenvolver](#como-desenvolver)
+  - [Testes](#testes)
+  - [Raspagem de notícias](#raspagem-de-notícias)
+  - [MongoDB](#mongodb)
+- [Requisitos obrigatórios:](#requisitos-obrigatórios)
+    - [1 - Crie a função `fetch`](#1---crie-a-função-fetch)
+    - [2 - Crie a função `scrape_noticia`](#2---crie-a-função-scrape_noticia)
+    - [3 - Crie a função `scrape_novidades`](#3---crie-a-função-scrape_novidades)
+    - [4 - Crie a função `scrape_next_page_link`](#4---crie-a-função-scrape_next_page_link)
+    - [5 - Crie a função `get_tech_news` para obter as notícias!](#5---crie-a-função-get_tech_news-para-obter-as-notícias)
+    - [6 - Crie a função `search_by_title`](#6---crie-a-função-search_by_title)
+    - [7 - Crie a função `search_by_date`](#7---crie-a-função-search_by_date)
+    - [8 - Crie a função `search_by_source`,](#8---crie-a-função-search_by_source)
+    - [9 - Crie a função `search_by_category`](#9---crie-a-função-search_by_category)
+    - [10 - Crie a função `top_5_news`](#10---crie-a-função-top_5_news)
+    - [11 - Crie a função `top_5_categories`](#11---crie-a-função-top_5_categories)
+  - [Requisitos bônus:](#requisitos-bônus)
+    - [12 - Crie a função `analyzer_menu`](#12---crie-a-função-analyzer_menu)
+    - [13 - Implemente as funcionalidades do menu](#13---implemente-as-funcionalidades-do-menu)
+- [Avisos Finais](#avisos-finais)
 
 - [Avisos finais](#avisos-finais)
 
