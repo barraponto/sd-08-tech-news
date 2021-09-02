@@ -1,11 +1,19 @@
 import requests
+import time
 
 
 # Requisito 1
 def fetch(url):
-    """Seu código deve vir aqui"""
-    # Requisição do tipo GET
-    return requests.get(url)
+    time.sleep(1)
+    try:
+        response = requests.get(url, timeout=3)
+        status = response.status_code
+        if status != 200:
+            return None
+        html = response.text
+        return html
+    except requests.Timeout:
+        return None
 
 
 # Requisito 2
