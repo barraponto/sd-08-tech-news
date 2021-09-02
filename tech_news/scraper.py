@@ -1,5 +1,7 @@
 import requests
 import time
+from parsel import Selector
+from requests.sessions import should_bypass_proxies
 
 
 # Requisito 1
@@ -16,7 +18,35 @@ def fetch(url):
 
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    """Return the news info object of a html page content"""
+    info_object = {}
+    selector = Selector(html_content)
+
+    url = selector.css('link[rel="amphtml"]::attr(href)').get()
+    info_object["url"] = url
+
+    title = selector.css('.tec--article__header__title::text').get()
+    info_object["title"] = title
+
+    timestamp = selector.css('time::attr(datetime)').get()
+    info_object["timestamp"] = timestamp
+
+    writer = selector.css('.tec--author__info__link::text').get()
+    info_object["writer"] = writer.strip() if writer != None else None
+
+    shares_count = selector.css('.tec--toolbar__item::text').re_first('\d+')
+    info_object["shares_count"] = int(shares_count) if shares_count != None else 0
+
+    comments_count = selector.css('.tec--toolbar__item > button::text').re_first('\d+')
+    info_object["comments_count"] = int(comments_count)
+
+    summarySelectors = selector.css('.tec--article__body p:first-child').css('*::text')
+    summary = [selector.get() for selector in summarySelectors]
+    summary = ''.join(summary)
+    info_object["summary"] = summary
+
+    print(info_object)
+
 
 
 # Requisito 3
