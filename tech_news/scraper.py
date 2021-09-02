@@ -1,6 +1,7 @@
 import requests
 import time
 from parsel import Selector
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -29,10 +30,18 @@ def scrape_noticia(html_content):
         "#js-article-date::attr(datetime)"
     ).get()
     writer = selector.css(".tec--author__info__link::text").get()
-    result["writer"] = writer.strip()
+
+    if writer is None:
+        result["writer"] = None
+    else:
+        result["writer"] = writer.strip()
+
     shares_count = selector.css(".tec--toolbar__item::text").getall()
-    shares_count = int(shares_count[0].split()[0])
-    result["shares_count"] = shares_count
+    if shares_count is None or len(shares_count) == 0:
+        result["shares_count"] = 0
+    else:
+        shares_count = int(shares_count[0].split()[0])
+        result["shares_count"] = shares_count
 
     comments_count = selector.css("#js-comments-btn::attr(data-count)").get()
     if comments_count is None:
@@ -81,11 +90,31 @@ def scrape_next_page_link(html_content):
     return next_page_url
 
 
-teste = requests.get('https://www.tecmundo.com.br/novidades')
-result = scrape_next_page_link(teste.text)
-print(result)
-
-
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    URL = "https://www.tecmundo.com.br/novidades"
+
+    page_content = fetch(URL)
+    result = []
+
+    while len(result) < amount:
+        links_list = scrape_novidades(page_content)
+
+        for link in links_list:
+            if len(result) < amount:
+                news_html_content = fetch(link)
+                news_dict = scrape_noticia(news_html_content)
+                result.append(news_dict)
+
+        if len(result) < amount:
+            next_page_link = scrape_next_page_link(page_content)
+            page_content = fetch(next_page_link)
+
+    print(amount)
+    print(len(result))
+
+    create_news(result)
+    return result
+
+
+get_tech_news(5)
