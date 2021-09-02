@@ -25,7 +25,10 @@ def scrape_noticia(html_content):
 # Requisito 3
 def scrape_novidades(html_content):
     selector = Selector(text=html_content)
-    urls_news = selector.css("div.tec--list a.tec--card__thumb__link::attr(href)").getall()
+    urls_news = selector.css(
+        "div.tec--list a.tec--card__thumb__link::attr(href)"
+    ).getall()
+    
     return urls_news
 
 
