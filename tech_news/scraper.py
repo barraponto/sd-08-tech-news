@@ -1,7 +1,20 @@
+import requests
+import time
+
+
 # Requisito 1
 def fetch(url):
-    """Seu código deve vir aqui"""
-    pass
+    """Returns an url content with a rate limit of 1 request per second
+    and timeout of 3 seconds for each
+    """
+    try:
+        time.sleep(1)
+        response = requests.get(url, timeout=3)
+        if response.status_code != 200:
+            return None
+        return response.text
+    except requests.exceptions.Timeout:
+        return None
 
 
 # Requisito 2
