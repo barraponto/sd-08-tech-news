@@ -1,7 +1,7 @@
 # Requisito 1
 def fetch(url):
     """Seu código deve vir aqui"""
-
+    pass
 
 # Requisito 2
 def scrape_noticia(html_content):
