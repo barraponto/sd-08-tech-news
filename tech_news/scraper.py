@@ -1,6 +1,26 @@
+import requests
+# from parsel import Selector
+import time
+
+
 # Requisito 1
 def fetch(url):
-    """Seu código deve vir aqui"""
+    time.sleep(1)
+
+    try:
+        response = requests.get(url, timeout=3)
+    except (
+        requests.exceptions.HTTPError,
+        requests.exceptions.TooManyRedirects,
+        requests.exceptions.Timeout,
+        requests.exceptions.ConnectionError
+    ):
+        return None
+
+    if response.status_code != 200:
+        return None
+
+    return response.text
 
 
 # Requisito 2
