@@ -16,41 +16,47 @@ def fetch(url):
         pass
 
 
+def shares_count(html_content):
+    selector = Selector(text=html_content)
+    if (selector.css(".tec--toolbar__item::text")
+            .get() is None):
+        return 0
+    if int(selector.css(".tec--toolbar__item::text")
+            .get().strip().split(" ")[0] != 0):
+        return (
+            int(
+                selector.
+                css(".tec--toolbar__item::text").get()
+                .strip().split(" ")[0]))
+    return 0
+
+
+def comments_count(html_content):
+    selector = Selector(text=html_content)
+    if int(selector.css("#js-comments-btn::attr(data-count)").get() != 0):
+        return (
+            int(selector.css("#js-comments-btn::attr(data-count)").get()))
+    return 0
+
+
+def writer(html_content):
+    selector = Selector(text=html_content)
+    data_1 = selector.css(".tec--author__info__link::text").get()
+    data_2 = selector.css("a[href*=autor]::text").get()
+    # https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
+    data_3 = selector.css(".tec--author__info p::text").get()
+
+    if data_1:
+        return data_1.strip() if data_1 else None
+    if data_2:
+        return data_2.strip() if data_2 else None
+    if data_3:
+        return data_3.strip() if data_3 else None
+
+
 # Requisito 2
 def scrape_noticia(html_content):
     selector = Selector(text=html_content)
-
-    def shares_count():
-        if (selector.css(".tec--toolbar__item::text")
-                .get() is None):
-            return 0
-        if int(selector.css(".tec--toolbar__item::text")
-                .get().strip().split(" ")[0] != 0):
-            return (
-                int(
-                    selector.
-                    css(".tec--toolbar__item::text").get()
-                    .strip().split(" ")[0]))
-        return 0
-
-    def comments_count():
-        if int(selector.css("#js-comments-btn::attr(data-count)").get() != 0):
-            return (
-                int(selector.css("#js-comments-btn::attr(data-count)").get()))
-        return 0
-
-    def writer():
-        data_1 = selector.css(".tec--author__info__link::text").get()
-        data_2 = selector.css("a[href*=autor]::text").get()
-        # https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
-        data_3 = selector.css(".tec--author__info p::text").get()
-
-        if data_1:
-            return data_1.strip() if data_1 else None
-        if data_2:
-            return data_2.strip() if data_2 else None
-        if data_3:
-            return data_3.strip() if data_3 else None
 
     return({
             "url": selector.css("head link[rel='canonical']::attr(href)")
@@ -61,11 +67,11 @@ def scrape_noticia(html_content):
             "timestamp": selector.css("#js-article-date::attr(datetime)")
             .get(),
 
-            "writer": writer(),
+            "writer": writer(html_content),
 
-            "shares_count": shares_count(),
+            "shares_count": shares_count(html_content),
 
-            "comments_count": comments_count(),
+            "comments_count": comments_count(html_content),
 
             "summary": "".join(selector.css(
                 ".tec--article__body > p:first-child ::text"
