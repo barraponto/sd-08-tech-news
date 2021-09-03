@@ -35,8 +35,7 @@ def get_categories_name(categories):
     return categories[0]
 
 
-# Requisito 11
-def top_5_categories():
+def get_categories():
     search_list = find_news()
     categories = {}
     for item in search_list:
@@ -50,6 +49,12 @@ def top_5_categories():
     list_news = list(categories.items())
     list_news.sort(key=get_categories_name)
     list_news.sort(key=get_categories_values, reverse=True)
+    return list_news
+
+
+# Requisito 11
+def top_5_categories():
+    list_news = get_categories()
     ordered_list = []
     for item in list_news[:5]:
         ordered_list.append(item[0])
