@@ -57,4 +57,3 @@ def search_by_category(category):
                 result = (item["title"], item["url"])
                 list_news.append(result)
     return list_news
-    """Seu código deve vir aqui"""
