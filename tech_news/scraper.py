@@ -59,12 +59,21 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    array_of_urls = selector.css(
+        ".tec--list__item .tec--card__title__link::attr(href)"
+    ).getall()
+    return array_of_urls
 
 
 # Requisito 4
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    next_page = selector.css(
+        ".tec--btn.tec--btn--lg.tec--btn--primary"
+        ".z--mx-auto.z--mt-48::attr(href)"
+    ).get()
+    return next_page
 
 
 # Requisito 5
