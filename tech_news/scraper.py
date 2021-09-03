@@ -25,6 +25,23 @@ def fetch(url):
     return response.text
 
 
+def select_author(selector):
+    writer = selector.css(".tec--author__info__link::text").get()
+    if writer is None:
+        writer = selector.css(
+            ".tec--article__body-grid div div div div a::text"
+        ).get()
+        if writer is None:
+            return None
+        else:
+            if (writer == ' '):
+                return "Equipe TecMundo"
+            else:
+                return writer.strip()
+    else:
+        return writer.strip()
+
+
 # Requisito 2
 def scrape_noticia(html_content):
     news = {}
@@ -39,20 +56,7 @@ def scrape_noticia(html_content):
     timestamp = selector.css("#js-article-date::attr(datetime)").get().strip()
     news["timestamp"] = timestamp
 
-    writer = selector.css(".tec--author__info__link::text").get()
-    if writer is None:
-        writer = selector.css(
-            ".tec--article__body-grid div div div div a::text"
-        ).get()
-        if writer is None:
-            news["writer"] = None
-        else:
-            if (writer == ' '):
-                news["writer"] = "Equipe TecMundo"
-            else:
-                news["writer"] = writer.strip()
-    else:
-        news["writer"] = writer.strip()
+    news['writer'] = select_author(selector)
 
     shares_count = selector.css(".tec--toolbar__item::text").get()
     if shares_count is None:
