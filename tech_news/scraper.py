@@ -68,7 +68,9 @@ def scrape_novidades(html_content):
 
 # Requisito 4
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+    return selector.css(
+        "#js-main > div > div > div > div> a::attr(href)").get()
 
 
 # Requisito 5
