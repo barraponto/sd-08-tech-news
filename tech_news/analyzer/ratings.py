@@ -24,6 +24,7 @@ def top_5_news():
         result = (item["title"], item["url"])
         ordered_list.append(result)
     return ordered_list
+    # return "eu entrei aqui"
     """Seu código deve vir aqui"""
 
 

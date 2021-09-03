@@ -9,7 +9,7 @@ from tech_news.analyzer.search_engine import (
 )
 
 
-def _input_option(self):
+def input_option(number):
     text = {
         0: "Digite quantas notícias serão buscadas:",
         1: "Digite o título:",
@@ -17,44 +17,49 @@ def _input_option(self):
         3: "Digite a fonte:",
         4: "Digite a categoria:",
     }
-    load = input(text[self])
+    load = input(text[number])
     response = ""
-    if self == 1:
-        response = _is_number(load)
+    if number == 0:
+        response = is_number(load)
         if response is None:
             return None
     else:
         response = load
-    print(text[self])
-    return _fist_case(self, response)
+    print(text[number])
+    return fist_case(number, response)
 
 
-def _fist_case(number, load):
+def fist_case(number, load):
+    print(number)
     case = {
-        0: get_tech_news(load),
-        1: search_by_title(load),
-        2: search_by_date(load),
-        3: search_by_source(load),
-        4: search_by_category(load)
+        0: get_tech_news,
+        1: search_by_title,
+        2: search_by_date,
+        3: search_by_source,
+        4: search_by_category
     }
-    return case[number.type]
+    return case[number](load)
 
 
-def _is_number(entrer):
+def is_number(entrer):
     number = None
     try:
         number = int(entrer)
     except TypeError:
-        _error_mensage()
+        error_mensage()
         return None
     except ValueError:
-        _error_mensage()
+        error_mensage()
         return None
     return number
 
 
-def _error_mensage():
+def error_mensage():
     print("Opção inválida", file=sys.stderr)
+
+
+def end_mensage():
+    print("Encerrando script")
 
 
 def analyzer_menu():
@@ -70,19 +75,19 @@ def analyzer_menu():
  7 - Sair."""
     )
     entre_number = {
-        5: top_5_news(),
-        6: top_5_categories(),
-        7: print("Encerrando script")
+        5: top_5_news,
+        6: top_5_categories,
+        7: end_mensage
     }
-    number = _is_number(entrer)
+    number = is_number(entrer)
     if number is None:
         return None
     if 0 <= number and number <= 4:
-        entrer = _input_option(number)
+        entrer = input_option(number)
     elif number <= 7:
-        return entre_number[number]
+        return entre_number[number]()
     elif number > 7:
-        _error_mensage()
+        error_mensage()
         return None
     else:
         print("Encerrando script")
