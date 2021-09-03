@@ -37,6 +37,12 @@ def scrape_noticia(html_content):
         "#js-main > div.z--container > article > div.tec--article__body-grid >"
         "div.z--mb-16.z--px-16 > div > a::text"
     ).getall()
+    categorie = selector.css("#js-categories::text").getall()
+    categories = selector.css("a.tec--badge--primary ::text").getall()
+    categories = []
+    for i in categorie:
+        j = i.strip()
+        categories.append(j)
     print(url)
     print(title)
     print(timestamp)
@@ -49,6 +55,7 @@ def scrape_noticia(html_content):
     print(comments_count)
     print("".join(summary))
     print("".join(sources))
+    print(categories)
 
 
 # Requisito 3
