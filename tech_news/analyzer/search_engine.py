@@ -29,8 +29,8 @@ def search_by_date(date):
     search = search_news({"timestamp": rgx})
     if search:
         for result in search:
-            date_url = (result["title"], result["url"])
-            news.append(date_url)
+            title_url = (result["title"], result["url"])
+            news.append(title_url)
         return news
     else:
         return []
@@ -38,9 +38,23 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    news = []
+    for unity_source in source:
+        rgx = re.compile(f".*{unity_source}.*", re.IGNORECASE)
+        search = search_news({"sources": rgx})
+        for result in search:
+            title_url = (result["title"], result["url"])
+            news.append(title_url)
+        return news
 
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    news = []
+    rgx = re.compile(category, re.IGNORECASE)
+    search = search_news({"categories": rgx})
+    for result in search:
+        title_url = (result["title"], result["url"])
+        news.append(title_url)
+    return news
+    
