@@ -1,4 +1,5 @@
 from tech_news.database import find_news
+from operator import itemgetter
 
 
 # Requisito 10
@@ -16,7 +17,8 @@ def top_5_news():
 
     top_five = sorted(
         news_list,
-        key=lambda curr_key: (curr_key["title"], curr_key["popularity"]),
+        key=itemgetter("popularity"),
+        reverse=True,
     )[:5]
     return [(news["title"], news["url"]) for news in top_five]
 
