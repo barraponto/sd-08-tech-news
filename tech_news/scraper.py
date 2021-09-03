@@ -30,6 +30,8 @@ def scrape_noticia(html_content):
         writer = selector.css(
             ".tec--article__body-grid div div div div a::text"
         ).get()
+        if not writer:
+            writer = " "
     if writer == " ":
         writer = "Equipe TecMundo"
 
