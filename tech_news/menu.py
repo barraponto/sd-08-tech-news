@@ -9,7 +9,7 @@ from tech_news.analyzer.search_engine import (
 )
 
 
-def _input_option(self, number):
+def _input_option(self):
     text = {
         0: "Digite quantas notícias serão buscadas:",
         1: "Digite o título:",
@@ -17,15 +17,16 @@ def _input_option(self, number):
         3: "Digite a fonte:",
         4: "Digite a categoria:",
     }
-    load = input(text[self.type])
-    if number == 1:
+    load = input(text[self])
+    response = ""
+    if self == 1:
         response = _is_number(load)
         if response is None:
             return None
     else:
         response = load
-    _fist_case(number, response)
-    return None
+    print(text[self])
+    return _fist_case(self, response)
 
 
 def _fist_case(number, load):
@@ -36,7 +37,7 @@ def _fist_case(number, load):
         3: search_by_source(load),
         4: search_by_category(load)
     }
-    return case[number]
+    return case[number.type]
 
 
 def _is_number(entrer):
