@@ -4,25 +4,31 @@ from tech_news.database import find_news
 
 # Requisito 6
 def search_by_title(title):
-    # search_list = search_news({{}, {'title': f'/ {title} /i'}})
-    # objectiv = re.compile(title)
     search_list = find_news()
     list_news = []
     for item in search_list:
-        print(re.search(title, item['title'], re.IGNORECASE))
-        if re.search(title, item['title'], re.IGNORECASE):
-            # print(item['title'], item['url'])
-            result = (item['title'], item['url'])
+        # https://stackoverflow.com/questions/6579876/how-to-match-a-substring-in-a-string-ignoring-case
+        if re.search(title, item["title"], re.IGNORECASE):
+            result = (item["title"], item["url"])
             list_news.append(result)
-    # list_s = [(item.title, item.url) for item in search_list]
-    # print(objectiv.match(item['title']))
     return list_news
-    """Seu código deve vir aqui"""
 
 
 # Requisito 7
 def search_by_date(date):
-    """Seu código deve vir aqui"""
+    if (
+        not re.search("\d{4}-\d{2}-\d{2}", date, re.IGNORECASE)
+        or int(date.split("-")[0]) < 2000
+    ):
+        raise ValueError("Data inválida")
+    search_list = find_news()
+    list_news = []
+    for item in search_list:
+        print(re.search(date, item["timestamp"], re.IGNORECASE))
+        if re.search(date, item["timestamp"], re.IGNORECASE):
+            result = (item["title"], item["url"])
+            list_news.append(result)
+    return list_news
 
 
 # Requisito 8
