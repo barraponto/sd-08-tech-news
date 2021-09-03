@@ -1,11 +1,54 @@
+from parsel import Selector
+import requests
+import time
+
+
 # Requisito 1
 def fetch(url):
-    """Seu código deve vir aqui"""
+    time.sleep(1)
+    try:
+        response = requests.get(
+            url, headers={"Accept": "application/json"}, timeout=3
+        )
+    except Exception:
+        return None
+    if response.status_code == 200:
+        return response.text
+    return None
 
 
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    url = selector.css("head > link:nth-child(26)::attr(href)").get()
+    title = selector.css("#js-article-title::text").get()
+    timestamp = selector.css("#js-article-date::attr(datetime)").get()
+    writer = selector.css(
+        "#js-author-bar > div > p.z--m-none.z--truncate.z--font-bold > a::text"
+    ).get()
+    shares_count = selector.css(
+        "#js-author-bar > nav > div:nth-child(1)::text"
+    ).get()
+    comments_count = selector.css("#js-comments-btn::attr(data-count)").get()
+    summary = selector.css(
+        "div.tec--article__body > p:nth-child(1)::text"
+    ).getall()
+    sources = selector.css(
+        "#js-main > div.z--container > article > div.tec--article__body-grid >"
+        "div.z--mb-16.z--px-16 > div > a::text"
+    ).getall()
+    print(url)
+    print(title)
+    print(timestamp)
+    if not (writer):
+        None
+    print(writer)
+    if not (shares_count):
+        0
+    print(shares_count)
+    print(comments_count)
+    print("".join(summary))
+    print("".join(sources))
 
 
 # Requisito 3

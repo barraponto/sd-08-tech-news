@@ -1,5 +1,5 @@
 <!-- 
-
+https://github.com/tryber/sd-08-tech-news/pull/10
  -->
 
 ### Termos e acordos
