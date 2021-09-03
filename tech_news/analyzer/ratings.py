@@ -27,3 +27,20 @@ def top_5_news():
 # Requisito 11
 def top_5_categories():
     """Seu código deve vir aqui"""
+    all_news = find_news()
+    if not all_news:
+        return []
+    all_categories = {}
+
+    for news in all_news:
+        for category in news["categories"]:
+            if category in all_categories:
+                all_categories[category] += 1
+            else:
+                all_categories[category] = 1
+
+    sorted_categories = list(all_categories.items())
+    sorted_categories.sort(key=lambda category: category[0])
+    sorted_categories.sort(key=lambda category: category[1], reverse=True)
+    sorted_list = [category[0] for category in sorted_categories]
+    return sorted_list[:5]

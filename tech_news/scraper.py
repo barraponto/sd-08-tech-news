@@ -22,6 +22,8 @@ def fetch(url):
 # Requisito 2
 def scrape_noticia(html_content):
     """Returns a dict with the selected info from a html content"""
+    if not html_content:
+        return None
     selector = Selector(text=html_content)
 
     # scrape writer
@@ -41,6 +43,11 @@ def scrape_noticia(html_content):
         shares_count = 0
     else:
         shares_count = shares_count.strip().split(" ")[0]
+    comments_count = selector.css(
+        "button#js-comments-btn::attr(data-count)"
+    ).get()
+    if not comments_count:
+        comments_count = 0
 
     return {
         "url": selector.css('link[rel="canonical"]::attr(href)').get(),
@@ -52,9 +59,7 @@ def scrape_noticia(html_content):
         ),
         "writer": writer.strip(),
         "shares_count": int(shares_count),
-        "comments_count": int(
-            selector.css("button#js-comments-btn::attr(data-count)").get()
-        ),
+        "comments_count": int(comments_count),
         "summary": selector.css(".tec--article__body")
         .xpath("string(./p)")
         .get(),
