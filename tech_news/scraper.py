@@ -30,7 +30,6 @@ def scrape_noticia(html_content):
         selector.css(".tec--author__info__link").xpath("text()").get().strip()
         or None
     )
-    # || None
     shares_count = (
         int(
             selector.css(".tec--toolbar__item")
@@ -40,7 +39,6 @@ def scrape_noticia(html_content):
         )
         or 0
     )
-    # || 0
     comments_count = (
         int(
             selector.css(".tec--toolbar__item")[1]
@@ -81,11 +79,20 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
+    selector = Selector(text=html_content)
+    list_links = (
+        selector.css(".tec--main")
+        .css(".tec--card__title__link")
+        .xpath("./@href")
+        .getall()[:20]
+    )
     """Seu código deve vir aqui"""
+    return list_links
 
 
 # Requisito 4
 def scrape_next_page_link(html_content):
+    # selector = Selector(text=html_content)
     """Seu código deve vir aqui"""
 
 
