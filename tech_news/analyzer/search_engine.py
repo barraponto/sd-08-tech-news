@@ -1,14 +1,16 @@
+import re
 from tech_news.database import search_news
 
 
 # Requisito 6
 def search_by_title(title):
     """Seu código deve vir aqui"""
-    query = {"title": {"$regex": f"/{title}/i"}}
-    news_by_title = search_news(query)
+    query = re.compile(f"{title}", re.IGNORECASE)
+    news_by_title = search_news({"title": query})
     news_tuple_list = []
     for news in news_by_title:
-        news_tuple_list.append((news["title"], news["url"]))
+        title_url_tuple = (news["title"], news["url"])
+        news_tuple_list.append(title_url_tuple)
     return news_tuple_list
 
 
