@@ -31,6 +31,32 @@ def get_writer(selector):
     return writer_raw
 
 
+def get_shares_count(selector):
+    try:
+        shares_count = int(
+            selector.css(".tec--toolbar__item::text")
+            .getall()[0]
+            .strip()
+            .split(" ")[0]
+        )
+    except IndexError:
+        shares_count = 0
+    return shares_count
+
+
+def get_comments_count(selector):
+    try:
+        comments_count = int(
+            selector.css(".tec--toolbar > div.tec--toolbar__item *::text")
+            .get()
+            .strip()
+            .split(" ")[0]
+        )
+    except ValueError:
+        comments_count = 0
+    return comments_count
+
+
 # Requisito 2
 def scrape_noticia(html_content):
     """Seu código deve vir aqui"""
@@ -38,26 +64,9 @@ def scrape_noticia(html_content):
 
     categories_raw = selector.css("div#js-categories a::text").getall()
     sources_raw = selector.css(".z--mb-16 > div > a::text").getall()
-    writer_raw = get_writer(selector)
-    try:
-        shares_count_raw = int(
-            selector.css(".tec--toolbar__item::text")
-            .getall()[0]
-            .strip()
-            .split(" ")[0]
-        )
-    except IndexError:
-        shares_count_raw = 0
-
-    try:
-        comments_count_raw = int(
-            selector.css(".tec--toolbar > div.tec--toolbar__item *::text")
-            .get()
-            .strip()
-            .split(" ")[0]
-        )
-    except ValueError:
-        comments_count_raw = 0
+    writer = get_writer(selector)
+    shares_count = get_shares_count(selector)
+    comments_count = get_comments_count(selector)
 
     return {
         "url": selector.css('meta[property="og:url"]::attr("content")').get(),
@@ -65,9 +74,9 @@ def scrape_noticia(html_content):
         "timestamp": selector.css(
             ".tec--timestamp__item > time::attr(datetime)"
         ).get(),
-        "writer": writer_raw,
-        "shares_count": shares_count_raw,
-        "comments_count": comments_count_raw,
+        "writer": writer,
+        "shares_count": shares_count,
+        "comments_count": comments_count,
         "summary": "".join(
             selector.css(
                 ".tec--article__body > p:nth-of-type(1) *::text"
