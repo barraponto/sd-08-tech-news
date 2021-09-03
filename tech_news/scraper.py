@@ -1,6 +1,22 @@
+import requests
+from ratelimit import limits, sleep_and_retry
+
+
 # Requisito 1
+@sleep_and_retry
+@limits(calls=1, period=1)
 def fetch(url):
-    """Seu código deve vir aqui"""
+    """
+    Given a url returns the resulting html of the request
+    Source: https://github.com/tomasbasham/ratelimit
+    """
+    try:
+        response = requests.get(url, timeout=3)
+        response.raise_for_status()
+    except (requests.Timeout, requests.HTTPError):
+        return None
+
+    return response.text
 
 
 # Requisito 2
