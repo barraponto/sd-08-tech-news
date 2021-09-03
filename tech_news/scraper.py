@@ -1,6 +1,16 @@
+import requests
+import time
+
+
 # Requisito 1
 def fetch(url):
-    """Seu código deve vir aqui"""
+    try:
+        response = requests.get("https://www.tecmundo.com.br/novidades")
+        time.sleep(1)
+    except requests.ReadTimeout:
+        return None
+    if (response.ok):
+        return response.text
 
 
 # Requisito 2
