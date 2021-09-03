@@ -86,16 +86,17 @@ def scrape_novidades(html_content):
         .xpath("./@href")
         .getall()[:20]
     )
-    """Seu código deve vir aqui"""
     return list_links
 
 
 # Requisito 4
 def scrape_next_page_link(html_content):
-    # selector = Selector(text=html_content)
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    link_next = selector.css(".tec--btn--lg").xpath("./@href").get() or None
+    return link_next
 
 
 # Requisito 5
 def get_tech_news(amount):
+    # selector = Selector(text=html_content)
     """Seu código deve vir aqui"""
