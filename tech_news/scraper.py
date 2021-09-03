@@ -17,13 +17,7 @@ def fetch(url):
     return html.text
 
 
-# Requisito 2
-def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
-    selector = Selector(text=html_content)
-
-    categories_raw = selector.css("div#js-categories a::text").getall()
-    sources_raw = selector.css(".z--mb-16 > div > a::text").getall()
+def get_writer(selector):
     try:
         writer_raw = (
             selector.css(".tec--timestamp__item.z--font-bold *::text")
@@ -34,6 +28,17 @@ def scrape_noticia(html_content):
         writer_raw = (
             selector.css(".tec--author__info *::text").get().strip()
         )
+    return writer_raw
+
+
+# Requisito 2
+def scrape_noticia(html_content):
+    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+
+    categories_raw = selector.css("div#js-categories a::text").getall()
+    sources_raw = selector.css(".z--mb-16 > div > a::text").getall()
+    writer_raw = get_writer(selector)
     try:
         shares_count_raw = int(
             selector.css(".tec--toolbar__item::text")
