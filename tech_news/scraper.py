@@ -19,22 +19,33 @@ def fetch(url):
     return response.text
 
 
-# Requisito 2
-def scrape_noticia(html_content):
-    selector = Selector(text=html_content)
-    url = selector.css("link[rel=canonical]::attr(href)").get() or None
-    title = (
-        selector.css(".tec--article__header__title").xpath("//h1/text()").get()
-        or None
-    )
-    timestamp = selector.css("time").xpath("@datetime").get() or None
+def scrape_writer(selector):
     writer = None
     writer_1 = selector.css(".tec--author__info__link").xpath("text()").get()
     # https://developer.mozilla.org/pt-BR/docs/Web/CSS/Attribute_selectors
     # para o uso de []
     writer_2 = selector.css("a[href*=autor]").xpath("text()").get()
     writer_3 = selector.css(".tec--author__info> p::text").get()
-    writer = writer_3 or writer_2 or writer_1
+    if writer_1:
+        writer = writer_1.strip()
+    elif writer_2:
+        writer = writer_2.strip()
+    elif writer_3:
+        writer = writer_3
+    return writer
+
+
+# Requisito 2
+def scrape_noticia(html_content):
+    selector = Selector(text=html_content)
+    writer = scrape_writer(selector)
+    url = selector.css("link[rel=canonical]::attr(href)").get() or None
+    title = (
+        selector.css(".tec--article__header__title").xpath("//h1/text()").get()
+        or None
+    )
+    timestamp = selector.css("time").xpath("@datetime").get() or None
+
     # elif writer == "Equipe TecMundo":
     #     writer = None
     shares_count = 0

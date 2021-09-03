@@ -4,7 +4,8 @@ from tech_news.database import search_news
 # Requisito 6
 def search_by_title(title):
     search_list = search_news(title)
-    return search_list
+    list_s = [(item.title, item.url) for item in search_list]
+    return list_s
     """Seu código deve vir aqui"""
 
 
