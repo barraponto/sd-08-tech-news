@@ -61,7 +61,9 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+    urls = selector.css("article > div > h3 > a::attr(href)").getall()
+    return [url.strip() for url in urls]
 
 
 # Requisito 4
