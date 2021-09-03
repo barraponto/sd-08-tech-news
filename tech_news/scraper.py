@@ -64,12 +64,20 @@ def scrape_noticia(html_content):
 # Requisito 3
 def scrape_novidades(html_content):
     selector = Selector(text=html_content)
-    return selector.css("div h3 a::attr(href)").getall()
+    str_novidades = "div h3 a::attr(href)"
+    return selector.css(str_novidades).getall()
 
 
 # Requisito 4
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    try:
+        selector = Selector(text=html_content)
+        next_1 = "#js-main > div > div > div.z--col.z--w-2-3 > "
+        next_2 = "div.tec--list.tec--list--lg > a::attr(href)"
+        str_next_page = next_1 + next_2
+        return selector.css(str_next_page).get()
+    except ValueError:
+        return None
 
 
 # Requisito 5
