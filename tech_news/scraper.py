@@ -34,14 +34,7 @@ def scrape_noticia(html_content):
     # para o uso de []
     writer_2 = selector.css("a[href*=autor]").xpath("text()").get()
     writer_3 = selector.css(".tec--author__info> p::text").get()
-    if writer_1:
-        print(writer_1, " - 1")
-        writer = writer_1.strip()
-    elif writer_2:
-        print(writer_2, " - 2")
-        writer = writer_2.strip()
-    elif writer_3:
-        writer = writer_3
+    writer = writer_3 or writer_2 or writer_1
     # elif writer == "Equipe TecMundo":
     #     writer = None
     shares_count = 0
