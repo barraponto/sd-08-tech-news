@@ -1,5 +1,14 @@
 import re
-from tech_news.database import get_collection, search_news
+import datetime
+from tech_news.database import search_news
+
+
+def serialize_news_list(news_list):
+    result = []
+    for news in news_list:
+        result.append((news["title"], news["url"]))
+    return result
+
 
 # Requisito 6
 def search_by_title(title):
@@ -7,15 +16,23 @@ def search_by_title(title):
     news_list = search_news({"title": re.compile(title, re.IGNORECASE)})
     if not news_list:
         return []
-    result = []
-    for news in news_list:
-        result.append((news["title"], news["url"]))
-    return result
+
+    return serialize_news_list(news_list)
 
 
 # Requisito 7
 def search_by_date(date):
     """Seu código deve vir aqui"""
+    try:
+        datetime.datetime.strptime(date, "%Y-%m-%d")
+    except ValueError:
+        raise ValueError("Data inválida")
+
+    news_list = search_news({"timestamp": re.compile(date)})
+    if not news_list:
+        return []
+
+    return serialize_news_list(news_list)
 
 
 # Requisito 8
