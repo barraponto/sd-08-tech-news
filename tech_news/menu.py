@@ -9,33 +9,34 @@ from tech_news.analyzer.search_engine import (
 )
 
 
-# Requisito 12
-def _input_option(number):
-    entrer = ""
-    if number == 0:
-        entrer = input("Digite quantas notícias serão buscadas:")
-        num = _is_number(entrer)
-        print(num)
-        get_tech_news(num)
-    elif number == 1:
-        entrer = input("Digite o título:")
-        search_by_title(entrer)
-    elif number == 2:
-        entrer = input("Digite a data no formato aaaa-mm-dd:")
-        search_by_date(entrer)
-    elif number == 3:
-        entrer = input("Digite a fonte:")
-        search_by_source(entrer)
+def _input_option(self, number):
+    text = {
+        0: "Digite quantas notícias serão buscadas:",
+        1: "Digite o título:",
+        2: "Digite a data no formato aaaa-mm-dd:",
+        3: "Digite a fonte:",
+        4: "Digite a categoria:",
+    }
+    load = input(text[self.type])
+    if number == 1:
+        response = _is_number(load)
+        if response is None:
+            return None
     else:
-        entrer = input("Digite a categoria:")
-        search_by_category(entrer)
-    # elif number == 5:
-    #     entre = input("Digite quantas notícias serão buscadas:")
-    # elif number == 6:
-    #     entre = input("Digite quantas notícias serão buscadas:")
-    # elif number == 7:
-    #     entre = input("Digite quantas notícias serão buscadas:")
-    return entrer
+        response = load
+    _fist_case(number, response)
+    return None
+
+
+def _fist_case(number, load):
+    case = {
+        0: get_tech_news(load),
+        1: search_by_title(load),
+        2: search_by_date(load),
+        3: search_by_source(load),
+        4: search_by_category(load)
+    }
+    return case[number]
 
 
 def _is_number(entrer):
@@ -67,17 +68,21 @@ def analyzer_menu():
  6 - Listar top 5 categorias;
  7 - Sair."""
     )
+    entre_number = {
+        5: top_5_news(),
+        6: top_5_categories(),
+        7: print("Encerrando script")
+    }
     number = _is_number(entrer)
     if number is None:
         return None
     if 0 <= number and number <= 4:
         entrer = _input_option(number)
-    if number == 5:
-        top_5_news()
-    if number == 6:
-        top_5_categories()
+    elif number <= 7:
+        return entre_number[number]
     elif number > 7:
         _error_mensage()
+        return None
     else:
         print("Encerrando script")
         pass
