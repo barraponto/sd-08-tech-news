@@ -28,28 +28,41 @@ def scrape_noticia(html_content):
         or None
     )
     timestamp = selector.css("time").xpath("@datetime").get() or None
-    writer = ""
-    writer1 = selector.css(".tec--author__info__link").xpath("text()").get()
-    writer2 = selector.css("a[href*=autor]").xpath("text()").get()
-    if writer1:
-        writer = writer1.strip()
-    elif writer2:
-        writer = writer2
-    else:
-        writer = None
-    shares_count = int(selector.css(".tec--btn::attr(data-count)").get() or 0)
-    comments_count = 0
-    if len(selector.css(".tec--toolbar__item")) > 1:
-        comments_count = (
-            int(
-                selector.css(".tec--toolbar__item")[1]
-                .xpath("//button/text()")
-                .getall()[1]
-                .split()[0]
-            )
-            or 0
-        )
+    writer = None
+    writer_1 = selector.css(".tec--author__info__link").xpath("text()").get()
+    # https://developer.mozilla.org/pt-BR/docs/Web/CSS/Attribute_selectors
+    # para o uso de []
+    writer_2 = selector.css("a[href*=autor]").xpath("text()").get()
+    writer_3 = selector.css(".tec--author__info> p::text").get()
+    if writer_1:
+        print(writer_1, " - 1")
+        writer = writer_1.strip()
+    elif writer_2:
+        print(writer_2, " - 2")
+        writer = writer_2.strip()
+    elif writer_3:
+        writer = writer_3
+    # elif writer == "Equipe TecMundo":
+    #     writer = None
+    shares_count = 0
+    # shares_count_1 = selector.css(".tec--btn::attr(data-count)").get()
+    shares_count_ = selector.css("div.tec--toolbar__item::text").get()
+    # if shares_count_1 and shares_count_1 != "0":
+    #     print(shares_count_1, ' - 1')
+    #     shares_count = int(shares_count_1)
+    if shares_count_ and shares_count_ != "0":
+        shares_count = int(shares_count_.split()[0])
+    # shares_count = int(
+    #     selector.css(".tec--btn::attr(data-count)").get()
+    #     or selector.css("div.tec--toolbar__item::text").get().split()[0]
+    #     or 0
+    # )
+    comments_count = int(
+        selector.css("#js-comments-btn::attr(data-count)").get() or 0
+    )
     summary = "".join(
+        # https://www.w3schools.com/cssref/sel_firstchild.asp
+        # para o uso do :firt-child
         selector.css(".tec--article__body > p:first-child")
         .css("*::text")
         .getall()
@@ -115,21 +128,21 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    # print(amount)
     page_n = fetch("https://www.tecmundo.com.br/novidades")
-    # print("https://www.tecmundo.com.br/novidades")
     index = 0
     result_info = []
+    list_news = scrape_novidades(page_n)
+    count_news = len(list_news)
     while amount > 0:
-        if index > 19:
-            print(scrape_next_page_link(page_n))
+        if index >= count_news:
             page_n = fetch(scrape_next_page_link(page_n))
+            list_news = scrape_novidades(page_n)
+            count_news = len(list_news)
             index = 0
-        list_news = scrape_novidades(page_n)
         read_news = scrape_noticia(fetch(list_news[index]))
         result_info.append(read_news)
         # print(list_news[index])
-        # print(index, amount)
         index += 1
         amount -= 1
     create_news(result_info)
+    return result_info
