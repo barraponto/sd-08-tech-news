@@ -1,5 +1,6 @@
 import requests
 import time
+from tech_news.database import create_news
 from parsel import Selector
 
 
@@ -23,15 +24,16 @@ def scrape_noticia(html_content):
     sources = selector.css("a[target].tec--badge *::text").getall()
     categories = selector.css("#js-categories a *::text").getall()
     summary = ''.join(selector.css(
-          "div .tec--article__body p:first-of-type *::text").getall())
+        ".tec--article__body > p:first-child *::text").getall())
+    writer = selector.css(".tec--author__info__link *::text").get()
+    shares_count = selector.css(
+          "div .tec--toolbar__item *::text").get().split()
     object = {
         "url": selector.css("link[rel^=canonical]::attr(href)").get(),
         "title": selector.css(".tec--article__header__title *::text").get(),
         "timestamp": selector.css("#js-article-date::attr(datetime)").get(),
-        "writer": selector
-        .css(".tec--author__info__link *::text").get().strip(),
-        "shares_count": int(selector.css(
-          "div .tec--toolbar__item *::text").get().split()[0]) or 0,
+        "writer": writer.strip() if writer is not None else None,
+        "shares_count": int(shares_count[0]) if len(shares_count) != 0 else 0,
         "comments_count": int(selector.css(
           "#js-comments-btn::attr(data-count)").get()),
         "summary": summary.replace('."', '. "'),
@@ -66,3 +68,23 @@ def scrape_next_page_link(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
+    counter = 0
+    total = 0
+    news = fetch("https://www.tecmundo.com.br/novidades")
+    listrefs = scrape_novidades(news)
+    newlist = []
+
+    while(total != amount):
+        news = news if total == 0 else fetch(scrape_next_page_link(news))
+        listrefs = scrape_novidades(news)
+        for link in listrefs:
+            result = scrape_noticia(fetch(link))
+            newlist.append(result)
+            counter += 1
+            total += 1
+            if(total == amount):
+                break
+
+    create_news(newlist)
+    print(len(newlist))
+    return newlist
