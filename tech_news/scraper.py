@@ -61,7 +61,7 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    """Returns a list of urls for the articles in the given html_content."""
     if not html_content:
         return []
     selector = Selector(text=html_content)
@@ -70,7 +70,7 @@ def scrape_novidades(html_content):
 
 # Requisito 4
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    """Returns the link to next page of contents if there are more."""
     selector = Selector(text=html_content)
     response = selector.css("div.tec--list > a::attr(href)").get()
     if not response:
