@@ -37,7 +37,7 @@ def scrape_noticia(html_content):
         "div.z--mb-16.z--px-16 > div > a::text"
     ).getall()
     categories = selector.css("a.tec--badge--primary ::text").getall()
-    return = {
+    return {
         "url": url,
         "title": title,
         "timestamp": timestamp,
