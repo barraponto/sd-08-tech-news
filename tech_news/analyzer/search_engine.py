@@ -13,7 +13,7 @@ def serialize_news_list(news_list):
 # Requisito 6
 def search_by_title(title):
     """Seu código deve vir aqui"""
-    # solução de 'https://stackoverflow.com/questions/6266555/querying-mongodb-via-pymongo-in-case-insensitive-efficiently'
+
     news_list = search_news({"title": re.compile(title, re.IGNORECASE)})
     if not news_list:
         return []
