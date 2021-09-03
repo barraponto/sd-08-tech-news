@@ -12,7 +12,14 @@ def search_by_title(title):
 
 # Requisito 7
 def search_by_date(date):
-    """Seu código deve vir aqui"""
+    year = date.split("-")[0]
+    if int(year) < 2000 or len(year) != 4:
+        raise ValueError("Data inválida")
+    query = {"timestamp": {"$regex": f".*{date}.*"}}
+    news_list = search_news(query)
+    tuples_list = [(news["title"], news["url"]) for news in news_list]
+
+    return tuples_list
 
 
 # Requisito 8
