@@ -122,4 +122,4 @@ def get_tech_news(amount):
                 break
         url = scrape_next_page_link(current_page_content)
     create_news(news_dict_list)
-    return news_dict_list[-amount:]
+    return news_dict_list
