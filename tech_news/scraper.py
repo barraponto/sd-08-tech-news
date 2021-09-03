@@ -20,6 +20,10 @@ def fetch(url):
 def scrape_noticia(html_content):
     """Seu código deve vir aqui"""
     selector = Selector(text=html_content)
+
+    categories_raw = selector.css("div#js-categories a::text").getall()
+    sources_raw = selector.css(".z--mb-16 > div > a::text").getall()
+
     return {
         "url": selector.css('meta[property="og:url"]::attr("content")').get(),
         "title": selector.css(".tec--article__header__title::text").get(),
@@ -31,14 +35,16 @@ def scrape_noticia(html_content):
         .getall()[0]
         .split(" ")[0]
         or 0,
-        # "comments_count": selector.css(".tec--toolbar__item::text")
-        # .getall()[1] or 0
-        # .split(" ")[0],
+        "comments_count": int(selector.css(
+            ".tec--toolbar > div.tec--toolbar__item *::text"
+        ).get().strip().split(" ")[0]) or 0,
         "summary": "".join(
-            selector.css(".tec--article__body > p *::text").getall()
+            selector.css(
+                ".tec--article__body > p:nth-of-type(1) *::text"
+            ).getall()
         ).strip(),
-        "sources": selector.css(".z--mb-16 > div > a::text").getall(),
-        "categories": selector.css("div#js-categories a::text").getall()
+        "sources": [source.strip() for source in sources_raw],
+        "categories": [category.strip() for category in categories_raw],
     }
 
 
