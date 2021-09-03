@@ -48,8 +48,8 @@ def search_by_category(category):
     news_list = find_news()
     LIST = []
     for item in news_list:
-        for value in item["categories"]:
-            if re.search(category, value, re.IGNORECASE):
+        for values in item["categories"]:
+            if re.search(category, values, re.IGNORECASE):
                 result = (item["title"], item["url"])
                 LIST.append(result)
             else:
