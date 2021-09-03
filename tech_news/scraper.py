@@ -19,7 +19,6 @@ def fetch(url):
 
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
     selector = Selector(text=html_content)
     str_url = "head link[rel=canonical]::attr(href)"
     url = selector.css(str_url).get()
@@ -64,7 +63,8 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    return selector.css("div h3 a::attr(href)").getall()
 
 
 # Requisito 4
