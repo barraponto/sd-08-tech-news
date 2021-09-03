@@ -1,7 +1,7 @@
 import requests
 from parsel import Selector
 import time
-from tech_news.database import (create_news)
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -15,6 +15,7 @@ def fetch(url):
         requests.exceptions.TooManyRedirects,
         requests.exceptions.Timeout,
         requests.exceptions.ConnectionError,
+        requests.exceptions.RequestException,
     ):
         return None
 
@@ -39,11 +40,19 @@ def scrape_noticia(html_content):
     news["timestamp"] = timestamp
 
     writer = selector.css(".tec--author__info__link::text").get()
-    print(writer)
-    if writer:
-        news["writer"] = writer.strip()
+    if writer is None:
+        writer = selector.css(
+            ".tec--article__body-grid div div div div a::text"
+        ).get()
+        if writer is None:
+            news["writer"] = None
+        else:
+            if (writer == ' '):
+                news["writer"] = "Equipe TecMundo"
+            else:
+                news["writer"] = writer.strip()
     else:
-        news["writer"] = None
+        news["writer"] = writer.strip()
 
     shares_count = selector.css(".tec--toolbar__item::text").get()
     if shares_count is None:
@@ -112,5 +121,4 @@ def get_tech_news(amount):
             page_novidades = fetch(next_link)
 
     create_news(noticias)
-    print(f"tamanho: {len(noticias)}")
     return noticias
