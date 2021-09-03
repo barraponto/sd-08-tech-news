@@ -1,1 +1,0 @@
-= selector.css("head > link:nth-child(26)::text").get()
