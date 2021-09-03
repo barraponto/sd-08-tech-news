@@ -47,13 +47,18 @@ def get_shares_count(selector):
 def get_comments_count(selector):
     try:
         comments_count = int(
-            selector.css(".tec--toolbar > div.tec--toolbar__item *::text")
+            selector.css("#js-comments-btn::attr(data-count)")
             .get()
             .strip()
             .split(" ")[0]
         )
     except ValueError:
-        comments_count = 0
+        comments_count = int(
+            selector.css(".tec--toolbar > div.tec--toolbar__item *::text")
+            .get()
+            .strip()
+            .split(" ")[0]
+        )
     return comments_count
 
 
@@ -111,7 +116,7 @@ def get_tech_news(amount):
     """Seu código deve vir aqui"""
     url = "https://www.tecmundo.com.br/novidades"
     news_dict_list = []
-    while len(news_dict_list) <= amount:
+    while len(news_dict_list) < amount:
         current_page_content = fetch(url)
         urls_to_scrape = scrape_novidades(current_page_content)
         for url in urls_to_scrape:
