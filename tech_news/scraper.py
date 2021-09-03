@@ -35,9 +35,13 @@ def scrape_noticia(html_content):
         .getall()[0]
         .split(" ")[0]
         or 0,
-        "comments_count": int(selector.css(
-            ".tec--toolbar > div.tec--toolbar__item *::text"
-        ).get().strip().split(" ")[0]) or 0,
+        "comments_count": int(
+            selector.css(".tec--toolbar > div.tec--toolbar__item *::text")
+            .get()
+            .strip()
+            .split(" ")[0]
+        )
+        or 0,
         "summary": "".join(
             selector.css(
                 ".tec--article__body > p:nth-of-type(1) *::text"
@@ -51,6 +55,10 @@ def scrape_noticia(html_content):
 # Requisito 3
 def scrape_novidades(html_content):
     """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    return selector.css(
+        ".tec--list__item  .tec--card__title__link::attr(href)"
+    ).getall()
 
 
 # Requisito 4
