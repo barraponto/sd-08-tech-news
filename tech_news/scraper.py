@@ -4,6 +4,37 @@ from parsel import Selector
 from tech_news.database import create_news
 
 
+def scrape_author(selector):
+    writer = selector.css(".tec--author__info__link::text").get()
+    if not writer:
+        writer = selector.css(
+            ".tec--article__body-grid div div div div a::text"
+        ).get()
+        if not writer:
+            writer = " "
+    if writer == " ":
+        writer = "Equipe TecMundo"
+    return writer.strip()
+
+
+def scrape_shares_count(selector):
+    shares_count = selector.css(".tec--toolbar__item::text").get()
+    if not shares_count:
+        shares_count = 0
+    else:
+        shares_count = shares_count.strip().split(" ")[0]
+    return int(shares_count)
+
+
+def scrape_comments_count(selector):
+    comments_count = selector.css(
+        "button#js-comments-btn::attr(data-count)"
+    ).get()
+    if not comments_count:
+        comments_count = 0
+    return int(comments_count)
+
+
 # Requisito 1
 def fetch(url):
     """Returns an url content with a rate limit of 1 request per second
@@ -26,29 +57,6 @@ def scrape_noticia(html_content):
         return None
     selector = Selector(text=html_content)
 
-    # scrape writer
-    writer = selector.css(".tec--author__info__link::text").get()
-    if not writer:
-        writer = selector.css(
-            ".tec--article__body-grid div div div div a::text"
-        ).get()
-        if not writer:
-            writer = " "
-    if writer == " ":
-        writer = "Equipe TecMundo"
-
-    # scrape shares_count
-    shares_count = selector.css(".tec--toolbar__item::text").get()
-    if not shares_count:
-        shares_count = 0
-    else:
-        shares_count = shares_count.strip().split(" ")[0]
-    comments_count = selector.css(
-        "button#js-comments-btn::attr(data-count)"
-    ).get()
-    if not comments_count:
-        comments_count = 0
-
     return {
         "url": selector.css('link[rel="canonical"]::attr(href)').get(),
         "title": selector.css("h1#js-article-title::text").get(),
@@ -57,9 +65,9 @@ def scrape_noticia(html_content):
             .xpath("./time/@datetime")
             .get()
         ),
-        "writer": writer.strip(),
-        "shares_count": int(shares_count),
-        "comments_count": int(comments_count),
+        "writer": scrape_author(selector),
+        "shares_count": scrape_shares_count(selector),
+        "comments_count": scrape_comments_count(selector),
         "summary": selector.css(".tec--article__body")
         .xpath("string(./p)")
         .get(),
