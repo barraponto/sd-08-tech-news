@@ -66,9 +66,6 @@ def scrape_noticia(html_content):
         })
 
 
-scrape_noticia(fetch("https://www.tecmundo.com.br/mobilidade-urbana-smart-cities/155000-musk-tesla-carros-totalmente-autonomos.htm"))
-
-
 # Requisito 3
 def scrape_novidades(html_content):
     """Seu código deve vir aqui"""
