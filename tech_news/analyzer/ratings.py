@@ -1,22 +1,24 @@
 from tech_news.database import find_news
-from operator import itemgetter
 
 
 # Requisito 10
+# https://stackoverflow.com/questions/72899/how-do-i-sort-a-list-of-dictionaries-by-a-value-of-the-dictionary
 def top_5_news():
-    news = []
-    top_five = []
+    news_list = []
     search = find_news()
+    if len(search) == 0:
+        return search
     for unity_new in search:
-        popularity = unity_new["shares_count"] + unity_new["comments_count"]
-        title_popularity = (unity_new["title"], popularity)
-        news.append(title_popularity)
+        unity_new["popularity"] = int(unity_new["shares_count"]) + int(
+            unity_new["comments_count"]
+        )
+        news_list.append(unity_new)
 
-    sorted(news, key=itemgetter(2), reverse=True)
-    for index in range(5):
-        title_url = (news["title"][index], news["url"][index])
-        top_five.append(title_url)
-    return news
+    top_five = sorted(
+        news_list,
+        key=lambda curr_key: (curr_key["title"], curr_key["popularity"]),
+    )[:5]
+    return [(news["title"], news["url"]) for news in top_five]
 
 
 # Requisito 11

@@ -57,4 +57,3 @@ def search_by_category(category):
         title_url = (result["title"], result["url"])
         news.append(title_url)
     return news
-    
