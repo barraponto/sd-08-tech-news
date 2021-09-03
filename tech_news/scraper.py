@@ -1,6 +1,7 @@
 import requests
 import time
 from parsel import Selector
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -20,12 +21,16 @@ def scrape_noticia(html_content):
     selector = Selector(text=html_content)
 
     def shares_count():
+        if (selector.css(".tec--toolbar__item::text")
+                .get() is None):
+            return 0
         if int(selector.css(".tec--toolbar__item::text")
-                .get().split(" ")[1] != 0):
+                .get().strip().split(" ")[0] != 0):
             return (
                 int(
                     selector.
-                    css(".tec--toolbar__item::text").get().split(" ")[1]))
+                    css(".tec--toolbar__item::text").get()
+                    .strip().split(" ")[0]))
         return 0
 
     def comments_count():
@@ -34,25 +39,36 @@ def scrape_noticia(html_content):
                 int(selector.css("#js-comments-btn::attr(data-count)").get()))
         return 0
 
+    def writer():
+        data_1 = selector.css(".tec--author__info__link::text").get()
+        data_2 = selector.css("a[href*=autor]::text").get()
+        # https://developer.mozilla.org/en-US/docs/Web/CSS/Attribute_selectors
+        data_3 = selector.css(".tec--author__info p::text").get()
+
+        if data_1:
+            return data_1.strip() if data_1 else None
+        if data_2:
+            return data_2.strip() if data_2 else None
+        if data_3:
+            return data_3.strip() if data_3 else None
+
     return({
             "url": selector.css("head link[rel='canonical']::attr(href)")
             .get(),
 
-            "title": selector.css("head title::text").get().split("-")[0]
-            .strip(),
+            "title": selector.css("#js-article-title::text").get(),
 
             "timestamp": selector.css("#js-article-date::attr(datetime)")
             .get(),
 
-            "writer": selector.css(".tec--author__info__link::text").get()
-            .strip(),
+            "writer": writer(),
 
             "shares_count": shares_count(),
 
             "comments_count": comments_count(),
 
             "summary": "".join(selector.css(
-                ".tec--article__body p:first-child ::text"
+                ".tec--article__body > p:first-child ::text"
             ).getall()),
             # https://www.simplilearn.com/tutorials/python-tutorial/list-to-string-in-python
 
@@ -78,9 +94,14 @@ def scrape_next_page_link(html_content):
     return selector.css("a.tec--btn::attr(href)").get()
 
 
-scrape_next_page_link(fetch(("https://www.tecmundo.com.br/novidades")))
-
-
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    teste_array = []
+    url = "https://www.tecmundo.com.br/novidades"
+    data_novidades_links = scrape_novidades(
+        fetch(url))[:amount]
+    for i in data_novidades_links:
+        print(i)
+        teste_array.append(scrape_noticia(fetch(i)))
+    create_news(teste_array)
+    return teste_array
