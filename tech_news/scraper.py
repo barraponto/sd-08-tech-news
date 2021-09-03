@@ -3,11 +3,6 @@ import time
 from parsel import Selector
 
 
-url = 'https://www.tecmundo.com.br/'
-news = 'mobilidade-urbana-smart-cities/155000-musk-tesla-carros-totalmente-autonomos.htm'
-news_page = url + news
-
-
 # Requisito 1
 def fetch(url):
     """Seu código deve vir aqui"""
