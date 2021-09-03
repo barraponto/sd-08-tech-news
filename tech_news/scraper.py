@@ -25,14 +25,44 @@ def scrape_noticia(html_content):
         "#js-article-title ::text"
     ).get()
     time = selector.css("time ::attr(datetime)").get()
-    writer = selector.css(".tec--author__info__link ::text").get()
+    writer = selector.css(".tec--author__info__link ::text").get().strip()
     time = selector.css("time ::attr(datetime)").get()
-    shares_count = selector.css(".tec--toolbar__item ::text").get()
-    comments_count = selector.css("#js-comments-btn ::attr(data-count)").get()
-    summary = selector.css(
-        "div.tec--article__body z--px-16 p402_premium > p:nth-child(1) *::text"
-    ).getall()
-    print(url, title, writer, time, shares_count, comments_count, summary)
+    shares_count = int(selector.css(
+        ".tec--toolbar__item ::text"
+    ).get().strip().split()[0])
+    comments_count = int(
+        selector.css("#js-comments-btn ::attr(data-count)").get()
+    )
+    summary = "".join(
+        selector.css(
+            "div.tec--article__body > p:nth-child(1) ::text"
+        ).getall())
+    sources = [
+        source.strip()
+        for source in selector.css(
+            "div .z--mb-16 > div > a"
+        ).xpath("text()").getall()
+    ]
+    categories = [
+        category.strip()
+        for category in selector.css(
+            "#js-categories > a"
+        ).xpath("text()").getall()
+    ]
+
+    obj = {
+        "url": url,
+        "title": title,
+        "timestamp": time,
+        "writer": writer,
+        "shares_count": shares_count,
+        "comments_count": comments_count,
+        "summary": summary,
+        "sources": sources,
+        "categories": categories,
+    }
+
+    return obj
 
 
 # Requisito 3
