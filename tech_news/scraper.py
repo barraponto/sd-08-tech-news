@@ -2,6 +2,7 @@ import requests
 import time
 from parsel import Selector
 
+
 # Requisito 1
 
 
@@ -24,14 +25,14 @@ def scrape_noticia(html_content):
 
     notices["url"] = selector.css("link[rel='canonical']::attr(href)").get()
     title = selector.css(".tec--article__header__title::text").get()
-    writer = selector.css(".tec--author__info__link::text").get().strip()
+    writer = selector.css(".tec--author__info__link::text").get()
     notices["title"] = title
     timestamp = selector.css("time::attr(datetime)").get()
     notices["timestamp"] = timestamp
     if not writer:
         notices["writer"] = None
     else:
-        notices["writer"] = writer
+        notices["writer"] = writer.strip()
     shares_count = selector.css(".tec--toolbar__item::text").get()
     notices["shares_count"] = int(
         shares_count[: -len("Compartilharam")].strip()
@@ -78,4 +79,4 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    pass
