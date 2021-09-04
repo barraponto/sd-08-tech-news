@@ -1,7 +1,5 @@
 from tech_news.database import find_news
 
-# from tech_news.analyzer.search_engine import serialize_news_list
-
 
 # Requisito 10
 def top_5_news():
