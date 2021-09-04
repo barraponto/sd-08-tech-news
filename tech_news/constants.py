@@ -1,0 +1,1 @@
+NUM_MAX_OPTIONS = 7
