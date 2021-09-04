@@ -20,26 +20,41 @@ def fetch(url):
 
 
 # Requisito 2
+def select_author(selector):
+    writer = selector.css(".tec--author__info__link::text").get()
+
+    if writer is None:
+        writer = selector.css(
+            ".tec--article__body-grid div div div div a::text"
+        ).get()
+        if writer is None:
+            return None
+        else:
+            if writer == " ":
+                return "Equipe TecMundo"
+            else:
+                return writer.strip()
+    else:
+        return writer.strip()
+
+
 def scrape_noticia(html_content):
     result = {}
     selector = Selector(text=html_content)
 
-    result["title"] = selector.css(".tec--article__header__title::text").get()
+    result["title"] = selector.css("#js-article-title::text").get()
     result["url"] = selector.css("link[rel='canonical']::attr(href)").get()
     result["timestamp"] = selector.css(
         "#js-article-date::attr(datetime)"
     ).get()
-    writer = selector.css(".tec--author__info__link::text").get()
 
-    if writer is None:
-        result["writer"] = None
-    else:
-        result["writer"] = writer.strip()
+    result["writer"] = select_author(selector)
 
-    shares_count = selector.css(".tec--toolbar__item::text").getall()
-    if shares_count is None or len(shares_count) == 0:
+    shares_count = selector.css(".tec--toolbar__item::text").get()
+    if shares_count is None:
         result["shares_count"] = 0
     else:
+        shares_count = selector.css(".tec--toolbar__item::text").getall()
         shares_count = int(shares_count[0].split()[0])
         result["shares_count"] = shares_count
 
@@ -52,22 +67,19 @@ def scrape_noticia(html_content):
     summary = selector.css(
         ".tec--article__body > p:first-child *::text"
     ).getall()
-    summary = "".join(summary)
-    result["summary"] = summary
+    result["summary"] = "".join(summary)
 
-    sources = [
+    result["sources"] = [
         source.strip()
         for source in selector.css(".z--mb-16 a.tec--badge::text").getall()
     ]
-    result["sources"] = sources
 
-    categories = [
+    result["categories"] = [
         category.strip()
         for category in selector.css(
             "#js-categories a.tec--badge::text"
         ).getall()
     ]
-    result["categories"] = categories
 
     return result
 
@@ -94,27 +106,22 @@ def scrape_next_page_link(html_content):
 def get_tech_news(amount):
     URL = "https://www.tecmundo.com.br/novidades"
 
-    page_content = fetch(URL)
-    result = []
+    html_content = fetch(URL)
+    news_list = []
 
-    while len(result) < amount:
-        links_list = scrape_novidades(page_content)
+    while len(news_list) < amount:
+        novidades_links = scrape_novidades(html_content)
+        for link in novidades_links:
+            if len(news_list) < amount:
+                actual_noticia = fetch(link)
+                noticia_html_content = scrape_noticia(actual_noticia)
+                news_list.append(noticia_html_content)
 
-        for link in links_list:
-            if len(result) < amount:
-                news_html_content = fetch(link)
-                news_dict = scrape_noticia(news_html_content)
-                result.append(news_dict)
+        if len(news_list) < amount:
+            next_link = scrape_next_page_link(html_content)
+            html_content = fetch(next_link)
 
-        if len(result) < amount:
-            next_page_link = scrape_next_page_link(page_content)
-            page_content = fetch(next_page_link)
+    create_news(news_list)
+    return news_list
 
-    print(amount)
-    print(len(result))
-
-    create_news(result)
-    return result
-
-
-get_tech_news(5)
+#  teste get_tech_news(5)
