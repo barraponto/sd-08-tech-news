@@ -1,5 +1,6 @@
 import requests
 from tech_news.NewsDetailsScraper import NewsDetailsScraper
+from tech_news.NewsScraper import NewsScraper
 from ratelimit import limits, sleep_and_retry
 
 
@@ -29,6 +30,7 @@ def scrape_noticia(html_content):
 # Requisito 3
 def scrape_novidades(html_content):
     """Seu código deve vir aqui"""
+    return NewsScraper(html_content).get_news_urls()
 
 
 # Requisito 4
