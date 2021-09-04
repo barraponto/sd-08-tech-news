@@ -1,4 +1,5 @@
 import requests
+from tech_news.NewsDetailsScraper import NewsDetailsScraper
 from ratelimit import limits, sleep_and_retry
 
 
@@ -21,7 +22,8 @@ def fetch(url):
 
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    """Return news data as dict"""
+    return NewsDetailsScraper(html_content).render()
 
 
 # Requisito 3
