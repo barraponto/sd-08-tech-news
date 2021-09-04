@@ -2,6 +2,8 @@ import requests
 from parsel import Selector
 import time
 
+from tech_news.database import create_news
+
 
 # Requisito 1
 def fetch(url):
@@ -14,6 +16,23 @@ def fetch(url):
             return None
     except requests.Timeout:
         return None
+
+
+def get_writer(categories, selector):
+    if "Minha Série" not in categories:
+        return selector.css(".tec--author__info *::text").get().strip()
+    else:
+        return selector.css(
+            "#js-main > div > article > div>"
+            "div > div > div > div > a::text").get().strip()
+
+
+def get_shares_count(categories, selector):
+    if "Minha Série" not in categories and "Voxel" not in categories:
+        return int(selector.css(
+            '.tec--toolbar > div:nth-child(1)::text').get().split()[0])
+    else:
+        return 0
 
 
 # Requisito 2
@@ -29,19 +48,14 @@ def scrape_noticia(html_content):
 
     timestamp = selector.css("#js-article-date::attr(datetime)").get()
 
-    writer = selector.css(".tec--author__info__link::text").get().strip()
+    categories = selector.css("#js-categories > a::text").getall()
+    categories = [category.strip() for category in categories]
 
     summary = ''.join(
         selector.css(".tec--article__body > p:nth-child(1) *::text").getall())
 
     sources = selector.css(".z--mb-16 > div > a::text").getall()
     sources = [source.strip() for source in sources]
-
-    categories = selector.css("#js-categories > a::text").getall()
-    categories = [category.strip() for category in categories]
-
-    shares_count = int(selector.css(
-        '.tec--toolbar > div:nth-child(1)::text').get().split()[0])
 
     comments_count = int(selector.css(
         '#js-comments-btn::attr(data-count)').get())
@@ -50,8 +64,8 @@ def scrape_noticia(html_content):
         "url": url,
         "title": title,
         "timestamp": timestamp,
-        "writer": writer,
-        "shares_count": shares_count,
+        "writer": get_writer(categories, selector),
+        "shares_count": get_shares_count(categories, selector),
         "comments_count": comments_count,
         "summary": summary,
         "sources": sources,
@@ -75,4 +89,15 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    path = "https://www.tecmundo.com.br/novidades"
+    news = []
+    while len(news) < amount and path:
+        html_news = fetch(path)
+        url_news_per_page = scrape_novidades(html_news)
+        for url in url_news_per_page:
+            if len(news) < amount:
+                html_specif_news = fetch(url)
+                news.append(scrape_noticia(html_specif_news))
+        path = scrape_next_page_link(html_news)
+    create_news(news)
+    return news
