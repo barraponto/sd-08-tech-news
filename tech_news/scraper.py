@@ -43,7 +43,7 @@ def get_comments_count(selector):
     return comments_count
 
 
-# https://www.delftstack.com/pt/howto/python/how-to-remove-whitespace-in-a-string/#:~:text=strip()%20%C3%A9%20a%20combina%C3%A7%C3%A3o,e%20no%20fim%20da%20string.
+# https://www.delftstack.com/pt/howto/python/how-to-remove-whitespace-in-a-string
 def get_summary(selector):
     summary = ' '
     summary_itens = selector.css(
@@ -90,7 +90,8 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    # selector = Selector(text=html_content)
+    pass
 
 
 # Requisito 4
