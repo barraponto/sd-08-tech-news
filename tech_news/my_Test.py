@@ -9,7 +9,9 @@ with open("tests/assets/cached_news.json") as arquivo:
 
 htmls2 = fetch(
     str(
-        "https://www.tecmundo.com.br/dispositivos-moveis/215327-pixel-5a-tera-lancamento-limitado-devido-escassez-chips.htm"
+        "https://www.tecmundo.com.br/"
+        "dispositivos-moveis/215327-pixel-5a-tera-lancamento"
+        "-limitado-devido-escassez-chips.htm"
     )
 )
 
