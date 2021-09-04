@@ -1,6 +1,7 @@
 import requests
 from tech_news.NewsDetailsScraper import NewsDetailsScraper
 from tech_news.NewsScraper import NewsScraper
+from tech_news.database import create_news
 from ratelimit import limits, sleep_and_retry
 
 
@@ -42,3 +43,21 @@ def scrape_next_page_link(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
+    page_url = "https://www.tecmundo.com.br/novidades"
+
+    html_contents = []
+    while True:
+        root_html_content = fetch(page_url)
+        scraper = NewsScraper(root_html_content)
+
+        skip = amount - len(html_contents)
+        urls = scraper.get_news_urls()[:skip]
+        html_contents += [fetch(url) for url in urls]
+        page_url = scraper.get_next_page_url()
+
+        if len(html_contents) == amount:
+            break
+
+    news = [NewsDetailsScraper(html).render() for html in html_contents]
+    create_news(news[:amount])
+    return news[:amount]
