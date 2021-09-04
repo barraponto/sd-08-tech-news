@@ -3,7 +3,7 @@ from tech_news.database import find_news
 
 # Requisito 10
 def top_5_news():
-    """Seu código deve vir aqui"""
+    """Search the 5 tech news with most share and comments count."""
     all_news = find_news()
     if not all_news:
         return []
@@ -24,7 +24,7 @@ def top_5_news():
 
 # Requisito 11
 def top_5_categories():
-    """Seu código deve vir aqui"""
+    """Search the 5 tech news by categories most used."""
     all_news = find_news()
     if not all_news:
         return []

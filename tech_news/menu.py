@@ -10,6 +10,7 @@ from tech_news.analyzer.ratings import top_5_news, top_5_categories
 
 
 def is_command(get_command):
+    """Validate input for commands and cast it to int."""
     command = None
     try:
         command = int(get_command)
@@ -28,6 +29,7 @@ def exit_command():
 
 
 def arg_command(number, load):
+    """Commands with arguments"""
     case = {
         0: get_tech_news,
         1: search_by_title,
@@ -39,6 +41,7 @@ def arg_command(number, load):
 
 
 def input_option(command):
+    """Input options to get arguments for the command"""
     second_menu = {
         0: "Digite quantas notícias serão buscadas:",
         1: "Digite o título:",
@@ -59,7 +62,7 @@ def input_option(command):
 
 
 def analyzer_menu():
-    """Seu código deve vir aqui"""
+    """Command line aplication menu entry point"""
     menu = (
         "Selecione uma das opções a seguir:\n"
         " 0 - Popular o banco com notícias;\n"

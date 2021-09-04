@@ -5,6 +5,7 @@ from tech_news.database import create_news
 
 
 def scrape_author(selector):
+    """Scrape the author from a tech news"""
     writer = selector.css(".tec--author__info__link::text").get()
     if not writer:
         writer = selector.css(
@@ -18,6 +19,7 @@ def scrape_author(selector):
 
 
 def scrape_shares_count(selector):
+    """Scrape the number of shares the tech news has"""
     shares_count = selector.css(".tec--toolbar__item::text").get()
     if not shares_count:
         shares_count = 0
@@ -27,6 +29,7 @@ def scrape_shares_count(selector):
 
 
 def scrape_comments_count(selector):
+    """Scrape the number of comments the tech news has"""
     comments_count = selector.css(
         "button#js-comments-btn::attr(data-count)"
     ).get()
@@ -107,7 +110,7 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    """Returns the list of tech news scraped and insert it into DB."""
     TECMUNDO_NOVIDADES_URL = "https://www.tecmundo.com.br/novidades"
     news_urls_list = []
 

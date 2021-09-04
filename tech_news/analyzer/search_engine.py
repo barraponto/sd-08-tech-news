@@ -4,6 +4,7 @@ from tech_news.database import search_news
 
 
 def serialize_news_list(news_list):
+    """Serialize the return from the search engine."""
     result = []
     for news in news_list:
         result.append((news["title"], news["url"]))
@@ -12,8 +13,7 @@ def serialize_news_list(news_list):
 
 # Requisito 6
 def search_by_title(title):
-    """Seu código deve vir aqui"""
-
+    """Search all tech news by title with the regex given."""
     news_list = search_news({"title": re.compile(title, re.IGNORECASE)})
     if not news_list:
         return []
@@ -23,7 +23,7 @@ def search_by_title(title):
 
 # Requisito 7
 def search_by_date(date):
-    """Seu código deve vir aqui"""
+    """Search all tech news by date with the YYYY-MM-DD format."""
     try:
         datetime.datetime.strptime(date, "%Y-%m-%d")
     except ValueError:
@@ -38,7 +38,7 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    """Search all tech news by source with the regex given."""
     news_list = search_news({"sources": re.compile(source, re.IGNORECASE)})
     if not news_list:
         return []
@@ -48,7 +48,7 @@ def search_by_source(source):
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    """Search all tech news by category with the regex given."""
     news_list = search_news(
         {"categories": re.compile(category, re.IGNORECASE)}
     )
