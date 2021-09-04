@@ -9,6 +9,15 @@ def format_output_new(idx, new):
     return (f'noticia_{idx}',  new['url'])
 
 
+def get_category_list(news):
+    category_list = []
+
+    for new in news:
+        category_list = category_list + new['categories']
+
+    return category_list
+
+
 # Requisito 10
 def top_5_news():
     news = find_news()
@@ -23,4 +32,12 @@ def top_5_news():
 
 # Requisito 11
 def top_5_categories():
-    """Seu código deve vir aqui"""
+    news = find_news()
+
+    category_list = get_category_list(news)
+    category_list.sort()
+
+    return [
+        categorie
+        for idx, categorie in enumerate(category_list, start=1) if idx <= 5
+    ]
