@@ -1,20 +1,27 @@
 from scraper import fetch
 from parsel import Selector
+from time import sleep
 
 # expexted = ""
 # with open("tests/assets/cached_news.json") as arquivo:
 #     all_news = json.load(arquivo)
 #     expexted = all_news[15]
+url = "https://www.tecmundo.com.br/novidades"
 
-htmls1 = fetch(str("https://www.tecmundo.com.br/novidades"))
+while True:
+    htmls1 = fetch(url)
 
-selector1 = Selector(text=htmls1)
+    selector1 = Selector(text=htmls1)
 
-list_links_noticias = selector1.xpath(
-    str(
-        "//div[@class='tec--list__item']"
-        "//figure//a[@class='tec--card__thumb__link']/@href"
-    )
-).getall()
+    url = selector1.xpath(
+        str(
+            "//a[@class='tec--btn tec--btn--lg "
+            "tec--btn--primary z--mx-auto z--mt-48']/@href"
+        )
+    ).get()
 
-[print(x, end="\n\n") for x in list_links_noticias]
+    print(url)
+    if not url:
+        print("FIM")
+        break
+# [print(x, end="\n\n") for x in list_links_noticias]
