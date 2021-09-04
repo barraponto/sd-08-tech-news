@@ -1,6 +1,7 @@
 from parsel import Selector
 import time
 import requests
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -93,16 +94,23 @@ def scrape_novidades(html_content):
     news = []
     selector = Selector(text=html_content)
     news = selector.css(
-        'div > div > article > div > h3 > a::attr(href)'
+        "div > div > article > div > h3 > a::attr(href)"
     ).getall()
     return news
 
 
 # Requisito 4
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    next_page_link = ' '
+    selector = Selector(text=html_content)
+    next_page_link = selector.css(
+        "#js-main > div > div > div.z--col.z--w-2-3 >"
+        "div.tec--list.tec--list--lg > a::attr(href)"
+    ).get()
+    return next_page_link
 
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    tech_news = []
+    return tech_news
