@@ -1,6 +1,20 @@
+import time
+import requests
+
+SUCCESS = 200
+
+
 # Requisito 1
 def fetch(url):
     """Seu código deve vir aqui"""
+    time.sleep(1)
+    try:
+        response = requests.get(
+            url, headers={"Accept": "text/html"}, timeout=3
+        )
+        return response.text if response.status_code == SUCCESS else None
+    except Exception:
+        return None
 
 
 # Requisito 2
