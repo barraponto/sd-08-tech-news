@@ -126,6 +126,7 @@ pythonenv*
 
 # mkdocs documentation
 /site
+GUARDADOS
 
 # mypy
 .mypy_cache/
