@@ -1,6 +1,26 @@
+from tech_news.database import db
+
+
 # Requisito 10
 def top_5_news():
     """Seu código deve vir aqui"""
+    results = list(
+        db.news.aggregate(
+            [
+                {
+                    "$addFields": {
+                        "popularity": {
+                            "$sum": ["$shares_count", "$comments_count"]
+                        }
+                    }
+                },
+                {"$sort": {"popularity": -1}},
+                {"$limit": 5},
+                {"$project": {"_id": 0, "url": 1, "title": 1}},
+            ]
+        )
+    )
+    return [(news["title"], news["url"]) for news in results]
 
 
 # Requisito 11
