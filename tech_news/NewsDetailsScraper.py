@@ -33,11 +33,8 @@ class NewsDetailsScraper:
         return int(count.split(" ")[0]) if count else 0
 
     def __get_comments_count(self):
-        return int(
-            self.selector.css(".tec--toolbar")
-            .re_first(r"\d+ Comentários")
-            .split(" ")[0]
-        )
+        count = self.selector.css(".tec--toolbar").re_first(r"\d+ Comentários")
+        return int(count.split(" ")[0]) if count else 0
 
     def __get_summary(self):
         return "".join(
