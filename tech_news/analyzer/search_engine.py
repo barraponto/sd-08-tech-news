@@ -1,9 +1,10 @@
 import re
-import datetime
-from tech_news.database import search_news
+from datetime import datetime
+from tech_news.database import search_news, find_news
 
 
 def get_result_list(list_to_format):
+    """Formats result list for search functions"""
     news_tuple_list = []
     for news in list_to_format:
         title_url_tuple = (news["title"], news["url"])
@@ -22,9 +23,15 @@ def search_by_title(title):
 # Requisito 7
 def search_by_date(date):
     """Seu código deve vir aqui"""
-    year, month, day = date.split('-')
-    date_query = datetime.date(int(year), int(month), int(day))
-    news_by_date = search_news({"timestamp": date_query})
+    try:
+        datetime.strptime(date, "%Y-%m-%d").strftime('%Y-%m-%d')
+    except ValueError:
+        raise ValueError("Data inválida")
+    news_list = find_news()
+    news_by_date = []
+    for news in news_list:
+        if str(news["timestamp"]).startswith(date):
+            news_by_date.append(news)
     return get_result_list(news_by_date)
 
 
