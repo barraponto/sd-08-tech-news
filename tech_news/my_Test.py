@@ -1,6 +1,5 @@
 from scraper import fetch
 from parsel import Selector
-from time import sleep
 
 # expexted = ""
 # with open("tests/assets/cached_news.json") as arquivo:
