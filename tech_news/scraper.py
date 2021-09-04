@@ -16,9 +16,9 @@ def fetch(url):
         return None
 
 # https://algoritmosempython.com.br/cursos/programacao-python/strings/
+
+
 # Requisito 2
-
-
 def get_writer(selector):
     writer = selector.css(
         "#js-author-bar > div >p.z--m-none.z--truncate.z--font-bold > a::text"
@@ -90,8 +90,12 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
-    # selector = Selector(text=html_content)
-    pass
+    news = []
+    selector = Selector(text=html_content)
+    news = selector.css(
+        'div > div > article > div > h3 > a::attr(href)'
+    ).getall()
+    return news
 
 
 # Requisito 4
