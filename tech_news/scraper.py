@@ -3,6 +3,7 @@ import requests
 from parsel import Selector
 import json
 import re
+from tech_news.database import create_news
 
 
 def fetch(url):
@@ -22,13 +23,13 @@ def replace_space(data):
         for x in range(len(data)):
             data[x] = data[x][1:-1]
     else:
-        data = data[1::-2]
+        if data is None or data == 0:
+            data = []
+        else:
+            data = data[1::-2]
 
 
-# Requisito 2
-def scrape_noticia(html_content):
-    selector = Selector(text=html_content)
-
+def scrape_noticia_url(selector):
     url = (
         selector.xpath(
             "//meta[contains(@content, 'https://www.tecmundo.com.br/')]"
@@ -36,29 +37,54 @@ def scrape_noticia(html_content):
         .css("::attr(content)")
         .get()
     )
+    return url
 
-    title = selector.css("#js-article-title::text").get()
 
-    timestamp = selector.css("div time::attr(datetime)").get()
+def ajuste_tecnico(writer):
+    if "  " in writer:
+        writer = writer.split("  ")
+        writer = (" ").join(writer)
+        writer = writer
+    elif "(" in writer:
+        writer = re.sub(r"[^\w\s\w][\s\S\w]*", "", writer)
+        writer = writer.split(" ")
+        writer = (" ").join(writer[:-1]) if writer[-1] == "" else writer
+    return writer
 
-    writer = json.loads(
-        (
+
+def scrape_noticia_writer(selector):
+    try:
+        writer = json.loads(
             selector.xpath(
                 str("//script[contains(@type, 'application/ld+json')]")
             )
             .css("::text")
             .getall()[1]
         )
-    )["author"]["name"]
 
-    shares_count = re.sub(
-        r"[A-Za-z]", "", selector.css(".tec--toolbar__item::text").get()
-    )
+        if writer.get("author"):
+            writer = writer["author"]["name"]
+            writer = ajuste_tecnico(writer)
+        else:
+            writer = None
 
-    comments_count = selector.css(
-        ".tec--toolbar__item button::attr(data-count)"
-    ).get()
+    except Exception:
+        return None
+    return writer
 
+
+def scrape_noticia_shares_count(selector):
+    shares_count = selector.css(".tec--toolbar__item::text").get()
+    if shares_count is None or shares_count == str(0):
+        shares_count = 0
+    else:
+        shares_count = re.sub(r"[A-Za-z]", "", shares_count)
+        shares_count = shares_count.replace(" ", "")
+
+    return shares_count
+
+
+def scrape_noticias_summary(selector):
     summary = (
         selector.xpath("//div[contains(@class, 'tec--article__body')][1]/p[1]")
         .css("*::text")
@@ -68,6 +94,29 @@ def scrape_noticia(html_content):
     str_concat = ""
     for world in summary:
         str_concat += world
+
+    return str_concat
+
+
+# Requisito 2
+def scrape_noticia(html_content):
+    selector = Selector(text=html_content)
+
+    url = scrape_noticia_url(selector)
+
+    title = selector.css("#js-article-title::text").get()
+
+    timestamp = selector.css("div time::attr(datetime)").get()
+
+    writer = scrape_noticia_writer(selector)
+
+    shares_count = scrape_noticia_shares_count(selector)
+
+    comments_count = (
+        selector.css(".tec--toolbar__item button::attr(data-count)").get() or 0
+    )
+
+    summary = scrape_noticias_summary(selector)
 
     sources = selector.css(".z--mb-16 div a::text").getall()
 
@@ -82,9 +131,9 @@ def scrape_noticia(html_content):
         "title": title,
         "timestamp": timestamp,
         "writer": writer,
-        "shares_count": int(shares_count.replace(" ", "")) or 0,
-        "comments_count": int(comments_count) or 0,
-        "summary": str_concat,
+        "shares_count": int(shares_count) or 0,
+        "comments_count": int(comments_count),
+        "summary": summary,
         "sources": sources,
         "categories": categories,
     }
@@ -125,4 +174,24 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    url = "https://www.tecmundo.com.br/novidades"
+    lista_info_noticias = []
+    while True:
+        str_html_novidades = fetch(url)
+
+        links_noticias_fetch = scrape_novidades(str_html_novidades)
+
+        for link in links_noticias_fetch:
+            if len(lista_info_noticias) < amount:
+                html_noticia = fetch(link)
+                info_noticia = scrape_noticia(html_noticia)
+                lista_info_noticias.append(info_noticia)
+            else:
+                break
+
+        url = scrape_next_page_link(str_html_novidades)
+        if len(lista_info_noticias) == amount:
+            break
+
+    create_news(lista_info_noticias)
+    return lista_info_noticias
