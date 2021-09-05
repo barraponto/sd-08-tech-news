@@ -1,13 +1,8 @@
-# from tech_news.database import create_news
-# from scraper import (
-#     fetch,
-#     scrape_noticia,
-#     scrape_novidades,
-#     scrape_next_page_link,
-# )
+from tech_news.database import find_news, search_news, get_collection
+
 # import json
 # from parsel import Selector
-import re
+# import re
 
 
 # def get_tech_news(amount):
@@ -61,10 +56,45 @@ import re
 
 # print(data)
 
-# get_tech_news(6)
+# get_tech_news(30)
 
-author = "Kris Gaiato (via nexperts)"
-author = re.sub(r"[^\w\s\w][\s\S\w]*", "", author)
-author = author.split(" ")
-author = (" ").join(author[:-1]) if author[-1] == "" else author
-print(author)
+# find_news, search_news, get_collection
+# def insert_or_update(notice):
+#     return (
+#         db.news.update_one(
+#             {"url": notice["url"]}, {"$set": notice}, upsert=True
+#         ).upserted_id
+#         is not None
+#     )
+
+
+# def find_news():
+#     return list(db.news.find({}, {"_id": False}))
+
+
+# data = search_news({"title": {"$regex": "tem"}})
+# print(data)
+# lista_result = []
+# for x in data:
+#     result = (x["title"], x["url"])
+#     lista_result.append(result)
+# [print(x, end="\n\n") for x in data]
+
+# [print(x, end="\n\n") for x in lista_result]
+
+
+def search_by_title(title):
+    data = search_news({"title": {"$regex": f"^(?i){title}"}})
+    if not data or len(data) == 0:
+        print("VAZIO ", data)
+        return []
+    lista_result = []
+    for x in data:
+        result = (x["title"], x["url"])
+        lista_result.append(result)
+    return lista_result
+
+
+d = search_by_title("VAMOSCOMTUDO")
+
+print(d)

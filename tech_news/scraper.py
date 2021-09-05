@@ -180,8 +180,9 @@ def get_tech_news(amount):
         str_html_novidades = fetch(url)
 
         links_noticias_fetch = scrape_novidades(str_html_novidades)
-
+        print("URL DA NOVIDADE -->", url)
         for link in links_noticias_fetch:
+            print("URL NOTICIA ATUAL -->  ", link, end="\n\n")
             if len(lista_info_noticias) < amount:
                 html_noticia = fetch(link)
                 info_noticia = scrape_noticia(html_noticia)
