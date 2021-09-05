@@ -1,14 +1,14 @@
 import time
 from parsel import Selector
 from requests import get
-
-SUCCESS = 200
+from tech_news.database import create_news
 
 
 # Requisito 1
 def fetch(url):
     """Seu código deve vir aqui"""
     time.sleep(1)
+    SUCCESS = 200
     try:
         response = get(url, headers={"Accept": "text/html"}, timeout=3)
         return response.text if response.status_code == SUCCESS else None
@@ -20,13 +20,8 @@ def fetch(url):
 def scrape_noticia(html_content):
     """Seu código deve vir aqui"""
     selector = Selector(text=html_content)
-    writer = selector.css("a.tec--author__info__link::text").get().strip()
-    shares_count = int(
-        selector.css("div.tec--toolbar__item::text")
-        .get()
-        .strip()
-        .split(" ")[0]
-    )
+    writer = selector.css(".z--font-bold").css("*::text").get().strip()
+    shares_count = selector.css("div.tec--toolbar__item::text").get() or "0"
     comments_count = int(
         selector.css("#js-comments-btn::attr(data-count)").get()
     )
@@ -46,7 +41,7 @@ def scrape_noticia(html_content):
         "title": selector.css("h1.tec--article__header__title::text").get(),
         "timestamp": selector.css("time::attr(datetime)").get(),
         "writer": writer,
-        "shares_count": shares_count,
+        "shares_count": int(shares_count.strip().split(" ")[0]),
         "comments_count": comments_count,
         "summary": summary,
         "sources": all_badges[:number_of_sources],
@@ -77,3 +72,14 @@ def scrape_next_page_link(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
+    all_news_list = []
+    news_page_html = fetch("https://www.tecmundo.com.br/novidades")
+    while len(all_news_list) < amount:
+        news_link_list = scrape_novidades(news_page_html)
+        for news in news_link_list:
+            if len(all_news_list) >= amount:
+                break
+            single_news_page_html = fetch(news)
+            all_news_list.append(scrape_noticia(single_news_page_html))
+    create_news(all_news_list)
+    return all_news_list
