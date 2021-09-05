@@ -17,8 +17,7 @@ def search_by_title(title):
 # Requisito 7
 def search_by_date(date):
     try:
-        y, m, d = date.split("-")
-        datetime.date(int(y), int(m), int(d))
+        datetime.datetime.fromisoformat(date).timestamp()
 
         data = search_news({"timestamp": {"$regex": date}})
         if not data or len(data) == 0:
@@ -30,7 +29,7 @@ def search_by_date(date):
             lista_result.append(result)
         return lista_result
     except ValueError:
-        return "Data inválida"
+        raise ValueError("Data inválida")
 
 
 # Requisito 8
