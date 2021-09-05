@@ -1,7 +1,8 @@
 from parsel import Selector
+from math import ceil
 import time
 import requests
-
+from tech_news.database import create_news
 
 # Requisito 1
 def fetch(url):
@@ -14,21 +15,18 @@ def fetch(url):
 
 
 # Requisito 2
-def filter_url(link):
-    base_url = 'https://www.tecmundo.com.br'
-    return base_url in link
-
-
 def find_url(html_content):
     selector = Selector(text=html_content)
-    href_links = selector.css('head link::attr(href)').getall()
-    return list(filter(filter_url, href_links))[-1]
+    url = selector.xpath('//link[contains(@rel, "canonical")]/@href').get()
+    return url
 
 
 def summary_serializer(summary):
     summary_selector = Selector(text=str(summary))
-    summary_text = summary_selector.css("p ::text").getall()
-    return "".join(summary_text[1:])
+    summary_list = summary_selector.css("p ::text").getall()
+    summary = [summary.replace('\\xa0', '\xa0') for summary in summary_list]
+    summary_text = "".join(summary[1:])
+    return summary_text
 
 
 def remove_white_spaces(array):
@@ -42,21 +40,24 @@ def scrape_noticia(html_content):
     selector = Selector(text=html_content)
     url = find_url(html_content)
     dt = selector.css("div.tec--timestamp--lg div time::attr(datetime)").get()
-    shares = selector.css("div.tec--toolbar__item::text").get().split(' ')[1]
-    comments = selector.css("#js-comments-btn::text").get().split(' ')[1]
+    shares_text = selector.css("div.tec--toolbar__item::text").get()
+    shares = shares_text.split(' ')[1] if shares_text != None else 0
+    comments = selector.xpath('//button[@id="js-comments-btn"]/@data-count').get()
     summary = selector.css("div.tec--article__body p").get(),
     str_summary = summary_serializer(summary)
     sources = selector.css("div.z--mb-16 div a::text").getall()
     categories = selector.css("#js-categories a::text").getall()
+    writer = selector.css(".z--font-bold a::text").get()\
+        or selector.css("p.z--font-bold::text").get()
 
     info_news = {
         "url": url,
         "title": selector.css("#js-article-title::text").get(),
         "timestamp": dt,
-        "writer": selector.css(".tec--author__info__link::text").get()[1:-1],
+        "writer": writer[1:-1] if writer[0] == ' ' else writer,
         "shares_count": int(shares) if shares != '' else 0,
         "comments_count": int(comments) if comments != '' else 0,
-        "summary": str_summary,
+        "summary": str(str_summary),
         "sources": remove_white_spaces(sources),
         "categories": remove_white_spaces(categories),
     }
@@ -81,4 +82,19 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    full_size = amount
+    html_content = fetch("https://www.tecmundo.com.br/novidades")
+    news_links = scrape_novidades(html_content)
+    data = []
+    for _ in range(ceil(amount / 20)):
+        size = 20 if full_size >= 20 else full_size - 20
+        for link in news_links[:size]:
+            page = fetch(link)
+            content = scrape_noticia(page)
+            data.append(content)
+        full_size -= 20
+        next_page_link = scrape_next_page_link(html_content)
+        next_page = fetch(next_page_link)
+        news_links = scrape_novidades(next_page)
+    create_news(data)
+    return data
