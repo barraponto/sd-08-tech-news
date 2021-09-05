@@ -14,8 +14,8 @@ def fetch(url):
 
 
 # Requisito 2
-base_url = 'https://www.tecmundo.com.br'
 def filter_url(link):
+    base_url = 'https://www.tecmundo.com.br'
     return base_url in link
 
 
@@ -41,6 +41,7 @@ def remove_white_spaces(array):
 def scrape_noticia(html_content):
     selector = Selector(text=html_content)
     url = find_url(html_content)
+    dt = selector.css("div.tec--timestamp--lg div time::attr(datetime)").get()
     shares = selector.css("div.tec--toolbar__item::text").get().split(' ')[1]
     comments = selector.css("#js-comments-btn::text").get().split(' ')[1]
     summary = selector.css("div.tec--article__body p").get(),
@@ -51,10 +52,10 @@ def scrape_noticia(html_content):
     info_news = {
         "url": url,
         "title": selector.css("#js-article-title::text").get(),
-        "timestamp": selector.css("div.tec--timestamp--lg div time::attr(datetime)").get(),
+        "timestamp": dt,
         "writer": selector.css(".tec--author__info__link::text").get()[1:-1],
-        "shares_count": int(shares) if shares !='' else 0,
-        "comments_count": int(comments) if comments !='' else 0,
+        "shares_count": int(shares) if shares != '' else 0,
+        "comments_count": int(comments) if comments != '' else 0,
         "summary": str_summary,
         "sources": remove_white_spaces(sources),
         "categories": remove_white_spaces(categories),
