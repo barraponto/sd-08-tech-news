@@ -29,9 +29,19 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    pass
+    news = search_news({"sources": {"$regex": source, "$options": "si"}})
+    result = []
+    for item in news:
+        tuple_item = (item["title"], item["url"])
+        result.append(tuple_item)
+    return result
 
 
 # Requisito 9
 def search_by_category(category):
-    pass
+    news = search_news({"categories": {"$regex": category, "$options": "si"}})
+    result = []
+    for item in news:
+        tuple_item = (item["title"], item["url"])
+        result.append(tuple_item)
+    return result
