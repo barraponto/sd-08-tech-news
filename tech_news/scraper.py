@@ -30,7 +30,7 @@ def scrape_noticia(html_content):
     comments_count = int(
         selector.css("#js-comments-btn::attr(data-count)").get()
     )
-    summary = ''.join(
+    summary = "".join(
         selector.css("div.tec--article__body > p:first-child")
         .css("*::text")
         .getall()
@@ -57,6 +57,14 @@ def scrape_noticia(html_content):
 # Requisito 3
 def scrape_novidades(html_content):
     """Seu código deve vir aqui"""
+    try:
+        selector = Selector(text=html_content)
+        news_list = selector.css(
+            ".tec--list__item .tec--card__title__link::attr(href)"
+        ).getall()
+        return news_list
+    except Exception:
+        return []
 
 
 # Requisito 4
