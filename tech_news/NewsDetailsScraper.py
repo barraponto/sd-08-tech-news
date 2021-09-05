@@ -44,14 +44,6 @@ class NewsDetailsScraper:
         )
 
     def __get_sources(self):
-        # trickie way
-        # xpath_selector = (
-        #     '//h2[re:match(text(), "Fontes")]/parent::div'
-        #     '//a[contains(@class, "tec--badge")]/text()'
-        # )
-        # sources = self.selector.xpath(xpath_selector).getall()
-
-        # easy way
         sources = self.selector.css(".z--mb-16.z--px-16 a::text").getall()
         if not sources:
             sources = self.selector.xpath(
@@ -64,14 +56,14 @@ class NewsDetailsScraper:
         return [categorie.strip() for categorie in categories]
 
     def render(self):
-        result = {}
-        result["url"] = self.__get_url()
-        result["title"] = self.__get_title()
-        result["timestamp"] = self.__get_timestamp()
-        result["writer"] = self.__get_writter()
-        result["shares_count"] = self.__get_shares_count()
-        result["comments_count"] = self.__get_comments_count()
-        result["summary"] = self.__get_summary()
-        result["sources"] = self.__get_sources()
-        result["categories"] = self.__get_categories()
-        return result
+        return {
+            "url": self.__get_url(),
+            "title": self.__get_title(),
+            "timestamp": self.__get_timestamp(),
+            "writer": self.__get_writter(),
+            "shares_count": self.__get_shares_count(),
+            "comments_count": self.__get_comments_count(),
+            "summary": self.__get_summary(),
+            "sources": self.__get_sources(),
+            "categories": self.__get_categories(),
+        }
