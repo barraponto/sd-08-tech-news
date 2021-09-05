@@ -1,4 +1,5 @@
-from tech_news.database import db
+from collections import Counter
+from tech_news.database import db, find_news
 
 
 # Requisito 10
@@ -26,4 +27,11 @@ def top_5_news():
 
 # Requisito 11
 def top_5_categories():
-    """Seu código deve vir aqui"""
+    results = find_news()
+    categories = []
+    for result in results:
+        categories = [*categories, *result["categories"]]
+    categories.sort()
+    occcurrences = Counter(categories).most_common(5)
+
+    return [category[0] for category in occcurrences]
