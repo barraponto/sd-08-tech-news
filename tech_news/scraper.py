@@ -20,10 +20,10 @@ def fetch(url):
 def scrape_noticia(html_content):
     """Seu código deve vir aqui"""
     selector = Selector(text=html_content)
-    writer = selector.css(".z--font-bold").css("*::text").get().strip()
+    writer = selector.css(".z--font-bold").css("*::text").get() or ""
     shares_count = selector.css("div.tec--toolbar__item::text").get() or "0"
-    comments_count = int(
-        selector.css("#js-comments-btn::attr(data-count)").get()
+    comments_count = (
+        selector.css("#js-comments-btn::attr(data-count)").get() or "0"
     )
     summary = "".join(
         selector.css("div.tec--article__body > p:first-child")
@@ -40,9 +40,9 @@ def scrape_noticia(html_content):
         "url": selector.css("link[rel=canonical]::attr(href)").get(),
         "title": selector.css("h1.tec--article__header__title::text").get(),
         "timestamp": selector.css("time::attr(datetime)").get(),
-        "writer": writer,
+        "writer": writer.strip(),
         "shares_count": int(shares_count.strip().split(" ")[0]),
-        "comments_count": comments_count,
+        "comments_count": int(comments_count),
         "summary": summary,
         "sources": all_badges[:number_of_sources],
         "categories": all_badges[number_of_sources:],
@@ -70,16 +70,33 @@ def scrape_next_page_link(html_content):
 
 
 # Requisito 5
+# def get_news_from_page(news_link_list):
+#     for news in news_link_list:
+#     if len(all_news_list) >= amount:
+#         break
+#     single_news_page_html = fetch(news)
+#     all_news_list.append(scrape_noticia(single_news_page_html))
+#     pass
+
+
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
+    # Solução desenvovida pelo Hugo Braga - Turma 8
+    # https://github.com/tryber/sd-08-tech-news/pull/18
     all_news_list = []
     news_page_html = fetch("https://www.tecmundo.com.br/novidades")
-    while len(all_news_list) < amount:
-        news_link_list = scrape_novidades(news_page_html)
-        for news in news_link_list:
-            if len(all_news_list) >= amount:
-                break
-            single_news_page_html = fetch(news)
-            all_news_list.append(scrape_noticia(single_news_page_html))
+    news_link_list = scrape_novidades(news_page_html)
+    index = 0
+    while amount > 0:
+        if index >= len(news_link_list):
+            next_page_link = scrape_next_page_link(news_page_html)
+            news_page_html = fetch(next_page_link)
+            news_link_list = scrape_novidades(news_page_html)
+            index = 0
+        individual_page_html = fetch(news_link_list[index])
+        news_data = scrape_noticia(individual_page_html)
+        all_news_list.append(news_data)
+        index += 1
+        amount -= 1
     create_news(all_news_list)
     return all_news_list
