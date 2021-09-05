@@ -4,6 +4,7 @@ import time
 import requests
 from tech_news.database import create_news
 
+
 # Requisito 1
 def fetch(url):
     try:
@@ -41,8 +42,8 @@ def scrape_noticia(html_content):
     url = find_url(html_content)
     dt = selector.css("div.tec--timestamp--lg div time::attr(datetime)").get()
     shares_text = selector.css("div.tec--toolbar__item::text").get()
-    shares = shares_text.split(' ')[1] if shares_text != None else 0
-    comments = selector.xpath('//button[@id="js-comments-btn"]/@data-count').get()
+    shares = shares_text.split(' ')[1] if shares_text is not None else 0
+    com = selector.xpath('//button[@id="js-comments-btn"]/@data-count').get()
     summary = selector.css("div.tec--article__body p").get(),
     str_summary = summary_serializer(summary)
     sources = selector.css("div.z--mb-16 div a::text").getall()
@@ -56,7 +57,7 @@ def scrape_noticia(html_content):
         "timestamp": dt,
         "writer": writer[1:-1] if writer[0] == ' ' else writer,
         "shares_count": int(shares) if shares != '' else 0,
-        "comments_count": int(comments) if comments != '' else 0,
+        "comments_count": int(com) if com != '' else 0,
         "summary": str(str_summary),
         "sources": remove_white_spaces(sources),
         "categories": remove_white_spaces(categories),
