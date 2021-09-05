@@ -36,9 +36,8 @@ def quit():
     print("Encerrando script")
 
 
-# Requisito 12
-def analyzer_menu():
-    option = input(
+def get_option():
+    return input(
         "Selecione uma das opções a seguir:\n"
         " 0 - Popular o banco com notícias;\n"
         " 1 - Buscar notícias por título;\n"
@@ -51,26 +50,44 @@ def analyzer_menu():
         "Opção: "
     )
 
-    if option == "0":
-        number_of_news = int(input("Digite quantas notícias serão buscadas: "))
-        get_tech_news(number_of_news)
-    elif option == "1":
-        title = input("Digite o título: ")
-        search_by_title(title)
-    elif option == "2":
-        date = input("Digite a data no formato aaaa-mm-dd: ")
-        search_by_date(date)
-    elif option == "3":
-        source = input("Digite a fonte: ")
-        search_by_source(source)
-    elif option == "4":
-        category = input("Digite a categoria: ")
-        search_by_category(category)
-    elif option == "5":
-        top_5_news()
-    elif option == "6":
-        top_5_categories()
-    elif option == "7":
-        quit()
-    else:
+
+questions = {
+    "0": "Digite quantas notícias serão buscadas: ",
+    "1": "Digite o título: ",
+    "2": "Digite a data no formato aaaa-mm-dd: ",
+    "3": "Digite a fonte: ",
+    "4": "Digite a categoria: ",
+}
+
+# Normalmente não seria necessário fazer essa gambiarra
+# porém nos testes está havendo um patch e as funções
+# que estavam sendo armazenadas no dicionário estavam
+# mantendo suas versões originais, então estou usando uma
+# lambda function para pegar a função em real time, aparentemente
+# isso resolve o problema. Certamente deve haver
+# uma forma melhor de fazer isso, mas como não posso mexer nos testes
+# vai ficar assim mesmo.
+options = {
+    "0": lambda user_input: get_tech_news(user_input),
+    "1": lambda user_input: search_by_title(user_input),
+    "2": lambda user_input: search_by_date(user_input),
+    "3": lambda user_input: search_by_source(user_input),
+    "4": lambda user_input: search_by_category(user_input),
+    "5": lambda: top_5_news(),
+    "6": lambda: top_5_categories(),
+    "7": lambda: quit(),
+}
+
+
+# Requisito 12
+def analyzer_menu():
+    option = get_option()
+
+    try:
+        if option in questions:
+            user_answer = input(questions[option])
+            options[option](user_answer)
+        else:
+            options[option]()
+    except KeyError:
         print("Opção inválida", file=sys.stderr)
