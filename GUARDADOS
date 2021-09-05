@@ -1,1 +1,7 @@
-python3 -m pytest tests/test_scraper.py -x
+python3 -m pytest tests/test_scraper.py -x -> tested
+
+sudo service mongod start
+sudo service mongod status
+sudo service mongod stop
+
+

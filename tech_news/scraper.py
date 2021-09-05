@@ -24,6 +24,8 @@ def get_writer(selector):
     writer = selector.css(
         "#js-author-bar > div >p.z--m-none.z--truncate.z--font-bold > a::text"
     ).get()
+    if not writer:
+        return None
     return writer.strip()
 
 
@@ -107,10 +109,20 @@ def scrape_next_page_link(html_content):
         "#js-main > div > div > div.z--col.z--w-2-3 >"
         "div.tec--list.tec--list--lg > a::attr(href)"
     ).get()
+    if not next_page_link:
+        return None
     return next_page_link
 
 
 # Requisito 5
 def get_tech_news(amount):
     tech_news = []
+    html = fetch("https://www.tecmundo.com.br/novidades")
+    next = scrape_next_page_link(html)
+    while amount:
+        tech_news.append(scrape_noticia(html))
+        if next is not None:
+            tech_news.append(scrape_next_page_link(html))
+            amount -= len(tech_news)
+    create_news(tech_news)
     return tech_news
