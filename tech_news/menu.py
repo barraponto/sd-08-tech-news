@@ -1,39 +1,12 @@
 import sys
-import tech_news.scraper as scraper
-import tech_news.analyzer.search_engine as search_engine
-import tech_news.analyzer.ratings as ratings
-
-
-def get_tech_news(number_of_news):
-    scraper.get_tech_news(number_of_news)
-
-
-def search_by_title(title):
-    print(search_engine.search_by_title(title))
-
-
-def search_by_date(date):
-    print(search_engine.search_by_date(date))
-
-
-def search_by_source(source):
-    print(search_engine.search_by_source(source))
-
-
-def search_by_category(category):
-    print(search_engine.search_by_category(category))
-
-
-def top_5_news():
-    print(ratings.top_5_news())
-
-
-def top_5_categories():
-    print(ratings.top_5_categories())
-
-
-def quit():
-    print("Encerrando script")
+from tech_news.scraper import get_tech_news
+from tech_news.analyzer.ratings import top_5_categories, top_5_news
+from tech_news.analyzer.search_engine import (
+    search_by_title,
+    search_by_date,
+    search_by_source,
+    search_by_category,
+)
 
 
 def get_option():
@@ -75,7 +48,7 @@ options = {
     "4": lambda user_input: search_by_category(user_input),
     "5": lambda: top_5_news(),
     "6": lambda: top_5_categories(),
-    "7": lambda: quit(),
+    "7": lambda: print("Encerrando script"),
 }
 
 
