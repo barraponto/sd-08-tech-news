@@ -1,5 +1,5 @@
 # Requisito 10
-def top_5_news():
+def top_5_news(categories):
     """Seu código deve vir aqui"""
 
 
