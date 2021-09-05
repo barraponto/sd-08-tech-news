@@ -9,7 +9,7 @@ def search_by_title(title):
     return [
         (new["title"], new["url"])
         for new in found_news
-        if new["title"].lower() == title.lower()
+        if title.lower() in new["title"].lower()
     ]
 
 
