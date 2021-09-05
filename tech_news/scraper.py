@@ -63,7 +63,7 @@ def scrape_noticia(html_content):
         ),
         "summary": "".join(
             selector.css(
-                ".tec--article__body p:first-of-type *::text"
+                ".tec--article__body > p:first-of-type *::text"
             ).getall()
         ),
         "sources": [
