@@ -3,17 +3,19 @@ import time
 from tech_news.database import create_news
 from parsel import Selector
 
+from requests.exceptions import ReadTimeout
+
 
 # Requisito 1
 def fetch(url):
-    """Seu código deve vir aqui"""
-    time.sleep(1)
     try:
-        response = requests.get(url, timeout=3)
-        if response.status_code != 200:
+        request = requests.get(url, timeout=3)
+        time.sleep(1)
+        if(request.status_code == 200):
+            return request.text
+        else:
             return None
-        return response.text
-    except requests.Timeout:
+    except ReadTimeout:
         return None
 
 
@@ -27,7 +29,7 @@ def scrape_noticia(html_content):
         ".tec--article__body > p:first-child *::text").getall())
     writer = selector.css(".tec--author__info__link *::text").get()
     shares_count = selector.css(
-          "div .tec--toolbar__item *::text").get().split()
+        "div .tec--toolbar__item *::text").get().split()
     object = {
         "url": selector.css("link[rel^=canonical]::attr(href)").get(),
         "title": selector.css(".tec--article__header__title *::text").get(),
@@ -75,6 +77,7 @@ def get_tech_news(amount):
     newlist = []
 
     while(total != amount):
+
         news = news if total == 0 else fetch(scrape_next_page_link(news))
         listrefs = scrape_novidades(news)
         for link in listrefs:
