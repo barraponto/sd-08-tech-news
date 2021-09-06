@@ -49,4 +49,3 @@ def search_by_category(category):
         searchResults.append((item["title"], item["url"]))
 
     return searchResults
-
