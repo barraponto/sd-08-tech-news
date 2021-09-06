@@ -33,7 +33,14 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    find_tech_news = db.find_news()
+    result = [
+        (tech_news["title"], tech_news["url"])
+        for tech_news in find_tech_news
+        if source.lower()
+        in (tech_source.lower() for tech_source in tech_news["sources"])
+    ]
+    return result
 
 
 # Requisito 9
