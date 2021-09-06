@@ -1,6 +1,15 @@
+from tech_news.database import get_collection
+
+
 # Requisito 10
 def top_5_news():
-    """Seu código deve vir aqui"""
+    top_5_list = list(get_collection().aggregate(
+        [{"$addFields": {"interactions":
+         {"$add": ["$comments_count", "$shares_count"]}}},
+         {"$sort": {"interactions": -1, "title": 1}},
+         {"$limit": 5},
+         {"$project": {"title": 1, "url": 1, "_id": 0}}]))
+    return [(el["title"], el["url"]) for el in top_5_list]
 
 
 # Requisito 11
