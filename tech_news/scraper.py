@@ -1,6 +1,7 @@
-from parsel import Selector
 import requests
 import time
+from parsel import Selector
+from tech_news.database import create_news
 
 # Referências:
 # http://www.dannejaha.se/programming/google-and-seo/Na7d08fa2_cannonical/
@@ -13,7 +14,7 @@ import time
 def fetch(url):
     """Seu código deve vir aqui"""
     try:
-        response = requests.get(url, timeout=3)
+        response = requests.get(url, timeout=5)
         time.sleep(1)
         if response.status_code == 200:
             return response.text
@@ -24,45 +25,53 @@ def fetch(url):
 # Requisito 2
 def scrape_noticia(html_content):
     """Seu código deve vir aqui"""
+    info = {}
     selector = Selector(html_content)
 
-    writer = selector.css(".tec--author__info__link::text").get()
-    if writer:
-        writer = writer.strip()
-    else:
-        writer = None
+    info["url"] = selector.css("head link[rel=canonical]::attr(href)").get()
 
-    shares_count = selector.css(".tec--toolbar__item::text").get().split()[0]
-    if shares_count:
-        shares_count = int(shares_count)
-    else:
-        shares_count = 0
+    info["title"] = selector.css(".tec--article__header__title::text").get()
 
-    comments_count = selector.css(".tec--btn::text").get().split(" ")[0]
-    if comments_count:
-        comments_count = int(comments_count)
-    else:
-        comments_count = 0
+    info["timestamp"] = selector.css("#js-article-date::attr(datetime)").get()
 
-    summary = selector.css(
-        ".tec--article__body p:nth-child(1) ::text"
-    ).getall()
+    info["writer"] = (
+        selector.css(".z--font-bold").css("*::text").get().strip()
+        if selector.css(".z--font-bold").css("*::text").get() is not None
+        else None
+    )
 
-    sources = selector.css(".z--mb-16 .tec--badge::text").getall()
+    info["shares_count"] = int(
+        selector.css(".tec--toolbar__item::text").get().split()[0]
+        if selector.css(".tec--toolbar__item::text").get() is not None
+        else 0
+    )
 
-    categories = selector.css("#js-categories .tec--badge::text").getall()
+    info["comments_count"] = int(
+        selector.css(".tec--toolbar__item .tec--btn::attr(data-count)").get()
+        if selector.css(
+            ".tec--toolbar__item .tec--btn::attr(data-count)"
+        ).get() is not None
+        else 0
+    )
 
-    info = {
-        "url": selector.css("head link[rel=canonical]::attr(href)").get(),
-        "title": selector.css(".tec--article__header__title::text").get(),
-        "timestamp": selector.css("#js-article-date::attr(datetime)").get(),
-        "writer": writer,
-        "shares_count": shares_count,
-        "comments_count": comments_count,
-        "summary": "".join(summary),
-        "sources": [source.strip() for source in sources],
-        "categories": [categorie.strip() for categorie in categories]
-    }
+    info["summary"] = "".join(
+        selector.css(".tec--article__body > p:nth-child(1) ::text").getall()
+    )
+
+    info["sources"] = [
+        source.strip()
+        for source in selector.css(
+            ".z--mb-16 .tec--badge::text"
+        ).getall()
+    ]
+
+    info["categories"] = [
+        categorie.strip()
+        for categorie in selector.css(
+            "#js-categories .tec--badge::text"
+        ).getall()
+    ]
+
     return info
 
 
@@ -89,3 +98,18 @@ def scrape_next_page_link(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
+    urlBase = "https://www.tecmundo.com.br/novidades"
+    techNews = list()
+
+    while len(techNews) < amount:
+        result = fetch(urlBase)
+        urlsNovidades = scrape_novidades(result)
+        for url in urlsNovidades:
+            pageNoticia = scrape_noticia(fetch(url))
+            if len(techNews) < amount:
+                techNews.append(pageNoticia)
+
+        urlBase = scrape_next_page_link(result)
+
+    create_news(techNews)
+    return techNews
