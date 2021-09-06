@@ -11,10 +11,6 @@ def search_by_title(title):
     data = search_news({"title": {"$regex": f"^(?i){title}"}})
     if not data or len(data) == 0:
         return []
-    # lista_result = []
-    # for x in data:
-    #     result = (x["title"], x["url"])
-    #     lista_result.append(result)
     return serealize(data)
 
 
@@ -26,10 +22,6 @@ def search_by_date(date):
         data = search_news({"timestamp": {"$regex": date}})
         if not data or len(data) == 0:
             return []
-        # lista_result = []
-        # for x in data:
-        #     result = (x["title"], x["url"])
-        #     lista_result.append(result)
         return serealize(data)
     except ValueError:
         raise ValueError("Data inválida")
@@ -48,4 +40,10 @@ def search_by_source(source):
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    try:
+        data = search_news({"categories": {"$regex": f"^(?i){category}"}})
+        if not data or len(data) == 0:
+            return []
+        return serealize(data)
+    except Exception:
+        return []
