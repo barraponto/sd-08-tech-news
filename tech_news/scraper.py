@@ -1,6 +1,8 @@
 from parsel import Selector
+from math import ceil
 import requests
 import time
+from tech_news.database import create_news
 
 # from pprint import pprint
 
@@ -68,4 +70,20 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    # """Seu código deve vir aqui"""
+    url = 'https://www.tecmundo.com.br/novidades'
+    lista_noticias = []
+    print('amount')
+    print(amount)
+    lista_url = scrape_novidades(url)
+    for _ in range(ceil(amount / 20)):
+        size = 20 if amount >= 20 else amount - 20
+        for link in lista_url[:size]:
+            noticia = fetch(link)
+            conteudo = scrape_noticia(noticia)
+            lista_noticias.append(conteudo)
+        amount -= 20
+        proxima = scrape_next_page_link(url)
+        lista_url = scrape_novidades(proxima)
+    create_news(lista_noticias)
+    return lista_noticias
