@@ -1,6 +1,7 @@
 import requests
 import time
 from parsel import Selector
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -23,12 +24,12 @@ def scrape_noticia(html_content):
     link = selector.css("link[rel=canonical]::attr(href)").get()
     title = selector.css(".tec--article__header__title::text").get()
     timestamp = selector.css("time::attr(datetime)").get()
-    author = selector.css(".tec--author__info__link::text").get().strip()
-    shares_count = int(
-        selector.css(".tec--toolbar__item::text").get().strip().split()[0]
+    author = selector.css(".z--font-bold").css("*::text").get() or ""
+    shares_count = (
+        selector.css("div.tec--toolbar__item::text").get() or "0"
     )
-    comments_count = int(
-        selector.css("#js-comments-btn ::attr(data-count)").get()
+    comments_count = (
+        selector.css("#js-comments-btn ::attr(data-count)").get() or "0"
     )
     summary = "".join(
         selector.css(
@@ -47,15 +48,14 @@ def scrape_noticia(html_content):
             "#js-categories > a"
         ).xpath("text()").getall()
     ]
-    print(timestamp)
 
     result = {
         "url": link,
         "title": title,
         "timestamp": timestamp,
-        "writer": author,
-        "shares_count": shares_count,
-        "comments_count": comments_count,
+        "writer": author.strip(),
+        "shares_count": int(shares_count.strip().split()[0]),
+        "comments_count": int(comments_count),
         "summary": summary,
         "sources": sources,
         "categories": categories,
@@ -84,3 +84,22 @@ def scrape_next_page_link(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
+    url = "https://www.tecmundo.com.br/novidades"
+    news_list = []
+    while len(news_list) < amount:
+        tech_news = fetch(url)
+        scrape_tech_news = scrape_novidades(tech_news)
+        for link in scrape_tech_news:
+            news = fetch(link)
+            news_list.append(scrape_noticia(news))
+            if len(news_list) == amount:
+                create_news(news_list)
+                return news_list
+        url = scrape_next_page_link(tech_news)
+    #     else:
+    #         break
+
+    # result = []
+    # for url in news_list:
+    #     news_content = scrape_noticia(url)
+    #     result.append(news_content)
