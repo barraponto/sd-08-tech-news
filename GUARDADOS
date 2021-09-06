@@ -4,4 +4,22 @@ sudo service mongod start
 sudo service mongod status
 sudo service mongod stop
 
+testes
++ o q é esperado de
+- é o que não é esperado
 
+def get_tech_news(amount):
+    tech_news = []
+    html = fetch("https://www.tecmundo.com.br/novidades")
+    next_page = scrape_next_page_link(html)
+    tech_news.append(scrape_noticia(html))
+    while len(tech_news) < amount:
+        if next_page is not None:
+            next_page = fetch(scrape_next_page_link(html))
+            tech_news.append(next_page)
+    create_news(tech_news[:amount])
+    return tech_news[:amount]
+
+https://www.geeksforgeeks.org/string-capitalize-python/
+
+https://www.kite.com/python/answers/how-to-validate-a-date-string-format-in-python

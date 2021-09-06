@@ -1,6 +1,10 @@
+#from tech_news.database import search_news
+# import datetime
+
+
 # Requisito 6
 def search_by_title(title):
-    """Seu código deve vir aqui"""
+    pass
 
 
 # Requisito 7

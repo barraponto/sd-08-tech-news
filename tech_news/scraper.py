@@ -22,26 +22,41 @@ def fetch(url):
 # Requisito 2
 def get_writer(selector):
     writer = selector.css(
-        "#js-author-bar > div >p.z--m-none.z--truncate.z--font-bold > a::text"
+        ".tec--author__info__link::text"
     ).get()
-    if not writer:
-        return None
-    return writer.strip()
+    # print('->' + writer)
+    if writer is None:
+        writer = selector.css(
+            ".tec--article__body-grid div div div div a::text"
+        ).get()
+        if writer is None:
+            return None
+        elif writer == " ":
+            # print('->' + writer)
+            # writer ="XABLAU"
+            return "Equipe TecMundo"
+        else:
+            # print('->' + writer)
+            return writer.strip()
+    else:
+        return writer.strip()
 
 
 def get_shares_count(selector):
-    shares_count = selector.css(
-        "#js-author-bar > nav > div:nth-child(1)::text"
-        ).get()
-    shares_count = shares_count[0]
-    if shares_count == " ":
+    shares_count = selector.css(".tec--toolbar__item::text").get()
+    # print(shares_count)
+    if shares_count:
+        shares_count = int(shares_count.split(' ')[1])
+    else:
         shares_count = 0
     return shares_count
 
 
 def get_comments_count(selector):
-    comments_count = selector.css("#js-comments-btn::text").get()
-    if comments_count == " ":
+    comments_count = selector.css("#js-comments-btn::attr(data-count)").get()
+    if comments_count:
+        comments_count = int(comments_count)
+    else:
         comments_count = 0
     return comments_count
 
@@ -59,8 +74,7 @@ def get_summary(selector):
 
 def get_sources(selector):
     sources_items = selector.css(
-        "#js-main > div.z--container > article >"
-        "div.tec--article__body-grid > div.z--mb-16.z--px-16 > div > a::text"
+        ".z--mb-16 div a.tec--badge::text"
     ).getall()
     sources = []
     for item in sources_items:
@@ -117,12 +131,14 @@ def scrape_next_page_link(html_content):
 # Requisito 5
 def get_tech_news(amount):
     tech_news = []
-    html = fetch("https://www.tecmundo.com.br/novidades")
-    next = scrape_next_page_link(html)
-    while amount:
-        tech_news.append(scrape_noticia(html))
-        if next is not None:
-            tech_news.append(scrape_next_page_link(html))
-            amount -= len(tech_news)
-    create_news(tech_news)
-    return tech_news
+    URL = "https://www.tecmundo.com.br/novidades"
+    while len(tech_news) < amount:
+        news_text = fetch(URL)
+        url_list = scrape_novidades(news_text)
+        for url in url_list:
+            html = fetch(url)
+            tech_news.append(scrape_noticia(html))
+            if len(tech_news) == amount:
+                create_news(tech_news)
+                return tech_news
+        URL = scrape_next_page_link(news_text)
