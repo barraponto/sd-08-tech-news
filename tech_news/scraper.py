@@ -55,7 +55,7 @@ def scrape_noticia(html_content):
         "title": title,
         "timestamp": time,
         "writer": writer.strip(),
-        "shares_count": int(shares_count.strip().split(" ")[0]),
+        "shares_count": int(shares_count.strip().split()[0]),
         "comments_count": int(comments_count),
         "summary": summary,
         "sources": sources,
