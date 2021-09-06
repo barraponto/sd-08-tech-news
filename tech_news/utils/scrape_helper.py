@@ -19,3 +19,12 @@ def scrape_news_shares_count(html_content):
         return int(shares_count.strip().split(' ')[0])
     except AttributeError:
         return 0
+
+def scrape_news_comments_count(html_content):
+    selector = Selector(html_content)
+
+    try:
+        comments_count = selector.css('#js-comments-btn::attr(data-count)').get()
+        return int(comments_count.strip().split(' ')[0])
+    except AttributeError:
+        return 0

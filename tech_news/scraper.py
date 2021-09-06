@@ -1,10 +1,11 @@
 import requests
 import time
+import math
 from parsel import Selector
 
-
+from tech_news.database import create_news
 from tech_news.utils.scrape_helper import (
-    scrape_news_writer, scrape_news_shares_count
+    scrape_news_writer, scrape_news_shares_count, scrape_news_comments_count
 )
 
 
@@ -15,7 +16,7 @@ def fetch(url):
             return response.text
     except (requests.ReadTimeout, requests.ConnectionError):
         return None
-
+    
     time.sleep(1)
 
 
@@ -28,9 +29,7 @@ def scrape_noticia(html_content):
       'timestamp': selector.css('#js-article-date::attr(datetime)').get(),
       'writer': scrape_news_writer(html_content),
       'shares_count': scrape_news_shares_count(html_content),
-      'comments_count': int(
-          selector.css('#js-comments-btn::attr(data-count)').get()
-      ),
+      'comments_count': scrape_news_comments_count(html_content),
       'summary': ''.join(
           selector.css('.tec--article__body p:first-child *::text').getall()
       ),
@@ -46,6 +45,9 @@ def scrape_noticia(html_content):
 
     return news_data_dict
 
+# news = fetch('https://www.tecmundo.com.br/minha-serie/224497-lucifer-novo-teaser-6-temporada-apresenta-figura-biblica.htm')
+# scrnews = scrape_noticia(news)
+# print(scrnews)
 
 def scrape_novidades(html_content):
     selector = Selector(text=html_content)
@@ -55,6 +57,9 @@ def scrape_novidades(html_content):
     ).getall()
     return news_links_list
 
+# news = fetch('https://www.tecmundo.com.br/novidades')
+# # print(news)
+# print(scrape_novidades(news))
 
 def scrape_next_page_link(html_content):
     selector = Selector(text=html_content)
@@ -63,6 +68,20 @@ def scrape_next_page_link(html_content):
     return next_news_page_link
 
 
-# Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    pages_to_scrape = math.ceil(amount/20)
+    url = 'https://www.tecmundo.com.br/novidades'
+    
+    for _ in range(pages_to_scrape):
+      page = fetch(url)
+      news_links = scrape_novidades(page)
+      print(news_links)
+
+      for link in news_links:
+        # print(link)
+        print(scrape_noticia(link))
+        url = scrape_next_page_link(page)
+    
+
+
+get_tech_news(41)
