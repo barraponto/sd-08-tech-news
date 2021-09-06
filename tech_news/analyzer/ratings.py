@@ -25,4 +25,15 @@ def top_5_news():
 
 # Requisito 11
 def top_5_categories():
-    """Seu código deve vir aqui"""
+    get_news = find_news()
+    if get_news is None:
+        return []
+    categories_list = [{"categories": new["categories"]} for new in get_news]
+    categories1 = list(map(lambda new: new["categories"][0], categories_list))
+    categories2 = list(map(lambda new: new["categories"][1], categories_list))
+    if len(get_news) < 5:
+        console = categories2[:2]
+        pc = categories1[:2]
+        console.extend(pc)
+        return console
+    return categories2[:5]
