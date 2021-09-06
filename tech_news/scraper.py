@@ -3,8 +3,7 @@ from math import ceil
 import requests
 import time
 from tech_news.database import create_news
-
-# from pprint import pprint
+from pprint import pprint
 
 
 # Requisito 1
@@ -40,7 +39,7 @@ def scrape_noticia(html_content):
         "div.z--mb-16.z--px-16 > div > a::text"
     ).getall()
     categories = selector.css("a.tec--badge--primary ::text").getall()
-    return {
+    obj = {
         "url": url,
         "title": title,
         "timestamp": timestamp,
@@ -51,6 +50,8 @@ def scrape_noticia(html_content):
         "sources": [i.strip() for i in sources],
         "categories": [i.strip() for i in categories],
     }
+    pprint(obj)
+    return obj
 
 
 # Requisito 3
@@ -73,14 +74,15 @@ def get_tech_news(amount):
     # """Seu código deve vir aqui"""
     url = 'https://www.tecmundo.com.br/novidades'
     lista_noticias = []
-    print('amount')
-    print(amount)
-    lista_url = scrape_novidades(url)
+    pagina = fetch(url)
+    lista_url = scrape_novidades(pagina)
     for _ in range(ceil(amount / 20)):
         size = 20 if amount >= 20 else amount - 20
         for link in lista_url[:size]:
             noticia = fetch(link)
             conteudo = scrape_noticia(noticia)
+            print('size')
+            print(conteudo)
             lista_noticias.append(conteudo)
         amount -= 20
         proxima = scrape_next_page_link(url)
