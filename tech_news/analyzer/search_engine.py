@@ -1,5 +1,7 @@
-#from tech_news.database import search_news
-# import datetime
+from tech_news.database import search_news
+import datetime
+
+# https://docs.mongodb.com/search/?q=python%20exemple
 
 
 # Requisito 6
