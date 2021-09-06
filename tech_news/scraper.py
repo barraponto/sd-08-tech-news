@@ -70,12 +70,20 @@ def scrape_noticia(html_content):
 def scrape_novidades(html_content):
     """Seu código deve vir aqui"""
     selector = Selector(html_content)
+
     return selector.css("h3.tec--card__title a::attr(href)").getall()
 
 
 # Requisito 4
 def scrape_next_page_link(html_content):
     """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+
+    response = selector.css(".tec--btn::attr(href)").get()
+    if response:
+        return response
+    else:
+        return None
 
 
 # Requisito 5
