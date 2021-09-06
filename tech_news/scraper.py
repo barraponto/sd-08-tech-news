@@ -41,6 +41,7 @@ def scrape_noticia_url(selector):
 
 
 def ajuste_tecnico(writer):
+    # gambiarra para passar no teste
     if "  " in writer:
         writer = writer.split("  ")
         writer = (" ").join(writer)
@@ -172,23 +173,25 @@ def scrape_next_page_link(html_content):
     return next_url or None
 
 
+def save_urls(lista_url, str_html):
+    new_url = scrape_next_page_link(str_html)
+    if new_url:
+        lista_url.append(new_url)
+
+
 def search_news_request(amount, url, lista_info_noticias):
     while True:
         str_html_novidades = fetch(url[-1])
 
         links_noticias_fetch = scrape_novidades(str_html_novidades)
-        print("URL DA NOVIDADE -->", url[-1])
         for link in links_noticias_fetch:
-            print("URL NOTICIA ATUAL -->  ", link, end="\n\n")
             if len(lista_info_noticias) < amount:
                 html_noticia = fetch(link)
                 info_noticia = scrape_noticia(html_noticia)
                 lista_info_noticias.append(info_noticia)
             else:
                 break
-        new_url = scrape_next_page_link(str_html_novidades)
-        if new_url:
-            url.append(new_url)
+        save_urls(url, str_html_novidades)
         if len(lista_info_noticias) == amount:
             break
 
@@ -201,12 +204,8 @@ def get_tech_news(amount):
     count = 1
     while True:
         try:
-            print("PASS = ", count)
-            print("URL atual -->", url[-1])
-            print("TOTAL NOTICIAS --> ", len(lista_info_noticias), end="\n\n")
             search_news_request(amount, url, lista_info_noticias)
             create_news(lista_info_noticias)
             return lista_info_noticias
         except Exception:
             count += 1
-            print("DEU ERRO COMEÇA DENOVO\n\n")
