@@ -14,4 +14,9 @@ def top_5_news():
 
 # Requisito 11
 def top_5_categories():
-    """Seu código deve vir aqui"""
+    return [item["_id"] for item in list(get_collection().aggregate(
+        [{"$unwind": "$categories"},
+         {"$group": {"_id": "$categories", "amount": {"$sum": 1}}},
+         {"$sort": {"amount": -1, "_id": 1}},
+         {"$limit": 5},
+         {"$project": {"_id": 1}}]))]
