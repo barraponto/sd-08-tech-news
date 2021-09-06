@@ -15,7 +15,20 @@ def search_by_title(title):
 
 # Requisito 7
 def search_by_date(date):
-    """Seu código deve vir aqui"""
+    find_tech_news = db.find_news()
+    try:
+        datetime.strptime(date, "%Y-%m-%d")
+    except ValueError:
+        raise ValueError("Data inválida")
+    result = [
+        (tech_news["title"], tech_news["url"])
+        for tech_news in find_tech_news
+        if datetime.strptime(date, "%Y-%m-%d").date()
+        == datetime.strptime(
+            tech_news["timestamp"], "%Y-%m-%dT%H:%M:%S"
+        ).date()
+    ]
+    return result
 
 
 # Requisito 8
