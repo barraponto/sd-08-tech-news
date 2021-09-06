@@ -27,20 +27,18 @@ def get_writer(selector):
         writer = selector.css(".tec--author__info p::text").get()
     return writer.strip() if writer else None
 
+
 def scrape_noticia(html_content):
     selector = Selector(text=html_content)
     url = selector.css("link[rel=canonical]::attr(href)").get()
     title = selector.css(".tec--article__header__title::text").get()
     timestamp = selector.css("time::attr(datetime)").get()
     writer = get_writer(selector)
-
     shares_count = selector.css(".tec--toolbar__item::text").get()
     if (type(shares_count) == str):
         shares_count = int(shares_count.strip().split()[0])
     else:
         shares_count = 0
-    
-
     comments_count = int(
         selector.css("#js-comments-btn ::attr(data-count)").get()
     )
@@ -53,7 +51,6 @@ def scrape_noticia(html_content):
     sources_list = selector.css(".z--mb-16 .tec--badge::text").getall()
     for source in sources_list:
         sources.append(source.strip())
-
     categories = []
     categories_list = selector.css("#js-categories > a *::text").getall()
     for category in categories_list:
