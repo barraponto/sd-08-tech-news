@@ -45,4 +45,11 @@ def search_by_source(source):
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    find_tech_news = db.find_news()
+    result = [
+        (tech_news["title"], tech_news["url"])
+        for tech_news in find_tech_news
+        if category.lower()
+        in (tech_category.lower() for tech_category in tech_news["categories"])
+    ]
+    return result
