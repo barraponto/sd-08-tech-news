@@ -60,6 +60,7 @@ def scrape_noticia(html_content):
             ).getall()
         ],
     )
+
     return tech_news
 
 
@@ -70,14 +71,21 @@ def scrape_novidades(html_content):
     response = selector.css(
         "h3.tec--card__title a.tec--card__title__link::attr(href)"
     ).getall()
+
     return response
 
 
 # Requisito 4
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+
+    selector = Selector(text=html_content)
+    response = selector.css(
+        "div.tec--list.tec--list--lg a.tec--btn--primary::attr(href)"
+    ).get()
+
+    return response
 
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    
