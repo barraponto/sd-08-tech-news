@@ -64,5 +64,31 @@ def top_5_news():
 
 
 # Requisito 11
+def serialize_categories(top_categories):
+    top_categories.sort(key=lambda x: x[0])
+    top_categories = [categories[0] for categories in top_categories]
+    return top_categories
+
+
+def sorted_categories(array_news):
+    top_categories = dict()
+    for new_tec in array_news:
+        if not new_tec["categories"] is None and len(new_tec) > 0:
+            for categories in new_tec["categories"]:
+                if not top_categories.get(categories):
+                    top_categories.update({categories: 1})
+                else:
+                    top_categories[categories] = top_categories[categories] + 1
+    top_categories = sorted(
+        top_categories.items(), key=lambda x: x[1], reverse=True
+    )
+    return top_categories
+
+
 def top_5_categories():
-    """Seu código deve vir aqui"""
+    array_news = find_news()
+    length = len(array_news)
+    if length == 0:
+        return []
+
+    return serialize_categories(sorted_categories(array_news))[:5]
