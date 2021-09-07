@@ -18,10 +18,9 @@ def fetch(url):
 resposne = fetch("https://www.tecmundo.com.br/novidades")
 
 
-def scrape_novidades(html_content):
+def scrape_next_page_link(html_content):
     selector = Selector(text=html_content)
+    return selector.css("a.tec--btn::attr(href)").get()
 
-    return selector.css("h3.tec--card__title a::attr(href)").getall()
 
-
-print(scrape_novidades(resposne))
+print(scrape_next_page_link(resposne))
