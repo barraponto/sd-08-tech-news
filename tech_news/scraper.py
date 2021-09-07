@@ -1,4 +1,5 @@
 import requests
+from parsel import Selector
 import time
 
 
@@ -15,7 +16,51 @@ def fetch(url):
 
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+
+    selector = Selector(text=html_content)
+    tech_news = dict(
+        url=selector.css(
+            "head > meta[property='og:url']::attr(content)"
+        ).get(),
+        title=selector.css(".tec--article__header__title::text").get(),
+        timestamp=selector.css(
+            ".tec--timestamp__item time::attr(datetime)"
+        ).get(),
+        writer=(
+            selector.css(".z--font-bold").css("*::text").get().strip() or ""
+            if selector.css(".z--font-bold").css("*::text").get() is not None
+            else None
+        ),
+        shares_count=int(
+            selector.css(".tec--toolbar__item::text").get().split()[0].strip()
+            if selector.css(".tec--toolbar__item::text").get() is not None
+            else 0
+        ),
+        comments_count=int(
+            selector.css(".tec--toolbar__item button::attr(data-count)").get()
+            if selector.css(
+                ".tec--toolbar__item button::attr(data-count)"
+            ).get()
+            is not None
+            else 0
+        ),
+        summary="".join(
+            selector.css(
+                ".tec--article__body > p:first-child *::text"
+            ).getall()
+        ),
+        sources=[
+            source.strip()
+            for source in selector.css(".z--mb-16 .tec--badge::text").getall()
+        ],
+        categories=[
+            category.strip()
+            for category in selector.css(
+                "#js-categories .tec--badge::text"
+            ).getall()
+        ],
+    )
+    return tech_news
 
 
 # Requisito 3
