@@ -97,7 +97,7 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    """Populate database with news data and return fetched news"""
     url = "https://www.tecmundo.com.br/novidades"
     tech_news = []
     while len(tech_news) < amount:
