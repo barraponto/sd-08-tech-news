@@ -15,38 +15,13 @@ def fetch(url):
         return None
 
 
-resposne = fetch("https://www.tecmundo.com.br/mobilidade-u")
+resposne = fetch("https://www.tecmundo.com.br/novidades")
 
 
-def scrape_noticia(html_content):
+def scrape_novidades(html_content):
     selector = Selector(text=html_content)
 
-    categories = []
-    sources = []
-    for categorie in selector.css("div#js-categories a::text").getall():
-        categories.append(categorie.strip())
-
-    for source in selector.css("div.z--mb-16 div a::text").getall():
-        sources.append(source.strip())
-
-    dicionario = {
-      "url": selector.css("head link[rel=canonical]::attr(href)").get(),
-      "title": selector.css("h1.tec--article__header__title::text").get(),
-      "timestamp": selector
-      .css("div.tec--timestamp__item time::attr(datetime)").get(),
-      "writer": selector.css("a.tec--author__info__link::text").get().strip(),
-      "shares_count": int(
-        selector.css("div.tec--toolbar__item::text").get().split().pop(0)),
-      "comments_count": int(
-        selector.css("div.tec--toolbar__item button::attr(data-count)").get()),
-      "summary": ''.join(
-        selector.css("div.tec--article__body p:nth-child(1) *::text").extract()
-      ),
-      "sources": sources,
-      "categories": categories,
-    }
-
-    return dicionario
+    return selector.css("h3.tec--card__title a::attr(href)").getall()
 
 
-print(scrape_noticia(resposne))
+print(scrape_novidades(resposne))
