@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from tech_news.database import db
 
 
@@ -36,7 +36,7 @@ def search_by_date(date):
             tuplas = result[0] if result is not None else []
             lista = list(tuple(tuplas.values()))
             return [(lista[1], lista[0])]
-    except:
+    except ValueError:
         raise ValueError('Data inválida')
 
 
