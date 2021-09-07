@@ -49,8 +49,10 @@ def scrape_novidades(html_content):
     """Returns a list with URLs"""
     selector = Selector(html_content)
 
-    link_list = selector.css('.tec--card__thumb__link::attr(href)').getall()
-    return link_list
+    url_list = selector.css(
+        '#js-main .tec--card__title__link::attr(href)'
+    ).getall()
+    return url_list
 
 
 # Requisito 4
