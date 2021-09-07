@@ -1,6 +1,17 @@
+from time import sleep
+import requests
+
+
 # Requisito 1
 def fetch(url):
-    """Seu código deve vir aqui"""
+    """Given an url, fetches HTML content"""
+    try:
+        sleep(1)
+        response = requests.get(url)
+        response.raise_for_status()
+    except (requests.Timeout, requests.HTTPError):
+        return None
+    return response.text
 
 
 # Requisito 2
