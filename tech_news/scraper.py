@@ -63,7 +63,7 @@ def scrape_noticia(html_content):
     )
 
     # extrai o texto da tag p e pseudo-classe nth-child(1)
-    # Dúvida: PQ com o uso do > 
+    # Dúvida: PQ com o uso do >
     # fonte: (https://stackoverflow.com/questions/38182972/
     # python-scrapy-cant-get-pseudo-class-not)
     summary = "".join(
@@ -110,6 +110,7 @@ def scrape_novidades(html_content):
     return selector.css(
             "div.tec--list__item h3 a::attr(href)"
     ).getall()
+
 
 # Requisito 4
 def scrape_next_page_link(html_content):
