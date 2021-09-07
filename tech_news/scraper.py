@@ -56,18 +56,19 @@ def scrape_noticia(html_content):
     # Deve extrair o número de compartilhamento da notícia.
     # A pseudo-classe CSS :nth-child() seleciona elementos
     #  com base em suas posições em um grupo de
-    # elementos irmãos. 
+    # elementos irmãos.
     # fonte (https://developer.mozilla.org/pt-BR/docs/Web/CSS/:nth-child)
     shares_count = int(
         selector.css(".tec--toolbar__item::text").get().strip().split()[0]
     )
 
     # extrai o texto da tag p e pseudo-classe nth-child(1)
+    # Dúvida: PQ com o uso do > 
     # fonte: (https://stackoverflow.com/questions/38182972/
     # python-scrapy-cant-get-pseudo-class-not)
     summary = "".join(
         selector.css(
-            "div.tec--article__body > p:nth-child(1) ::text"
+            "div.tec--article__body p:nth-child(1) ::text"
         ).getall()
     )
 
@@ -79,10 +80,10 @@ def scrape_noticia(html_content):
     for source in source_list:
         sources.append(source.strip())
 
-    # cria a lista de categorias através do id js-categories e 
+    # cria a lista de categorias através do id js-categories e
     # acessando o texto da tag a
     categories = []
-    categories_list = selector.css("#js-categories > a *::text").getall()
+    categories_list = selector.css("#js-categories a *::text").getall()
     for category in categories_list:
         categories.append(category.strip())
 
@@ -103,7 +104,11 @@ def scrape_noticia(html_content):
 # Requisito 3
 def scrape_novidades(html_content):
     """Seu código deve vir aqui"""
-
+    selector = Selector(text=html_content)
+    return selector.css(
+            "div.tec--list tec--list--lg .tec--card__title__link > h3 > a::attr(href)"
+            # ".tec--list__item > article > div > h3 > a::attr(href)"
+    ).getall()
 
 # Requisito 4
 def scrape_next_page_link(html_content):
