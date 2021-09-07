@@ -1,5 +1,6 @@
 import requests
 import time
+from parsel import Selector
 
 # Requisito 1
 
@@ -16,7 +17,40 @@ def fetch(url):
 
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    news_link = selector.css("head link[rel=canonical]::attr(href)").get()
+    news_title = selector.css("h1.tec--article__header__title::text").get()
+    time = selector.css("div.tec--timestamp__item time::attr(datetime)").get()
+    news_writer = selector.css("a.tec--author__info__link::text").get()
+    if news_writer:
+        news_writer = news_writer.strip()
+    news_share = selector.css("div.tec--toolbar__item::text").get()
+    if news_share:
+        news_share = int((news_share.strip()).split(" ")[0])
+    else:
+        news_share = 0
+    news_comments = selector.css("div.tec--toolbar__item::text").get()
+    if news_comments:
+        news_comments = int((news_comments.strip()).split(" ")[0])
+    else:
+        news_comments = 0
+    news_summary = selector.css(
+        ".tec--article__body p:first-child *::text"
+    ).getall()
+    news_source = selector.css(".z--mb-16 .tec--badge::text").getall()
+    news_categories = selector.css("div#js-categories a::text").getall()
+
+    return {
+        "url": news_link,
+        "title": news_title,
+        "timestamp": time,
+        "writer": news_writer,
+        "shares_count": news_share,
+        "comments_count": news_comments,
+        "summary": "".join(news_summary),
+        "sources": [source.strip() for source in news_source],
+        "categories": [category.strip() for category in news_categories],
+    }
 
 
 # Requisito 3
