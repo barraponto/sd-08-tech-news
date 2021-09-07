@@ -1,6 +1,7 @@
 import requests
 import time
 from parsel import Selector
+from tech_news.database import create_news
 
 # Requisito 1
 
@@ -89,4 +90,5 @@ def get_tech_news(amount):
                 news.append(details_news)
         get_url = scrape_next_page_link(get_url)
         get_links = scrape_novidades(get_url)
+    create_news(news[:amount])
     return news[:amount]
