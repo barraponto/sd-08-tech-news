@@ -7,7 +7,7 @@ def fetch(url):
     """Given an url, fetches HTML content"""
     try:
         sleep(1)
-        response = requests.get(url)
+        response = requests.get(url, timeout=3)
         response.raise_for_status()
     except (requests.Timeout, requests.HTTPError):
         return None
