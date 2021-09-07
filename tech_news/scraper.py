@@ -74,4 +74,19 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    news = []
+    url = "https://www.tecmundo.com.br/novidades"
+
+    get_url = fetch(url)
+    get_links = scrape_novidades(get_url)
+
+    while len(get_links) > 0:
+        for i in range(amount):
+            link = get_links[i]
+            searching_news = fetch(link)
+            if i > amount:
+                details_news = scrape_noticia(searching_news)
+                news.append(details_news)
+        get_url = scrape_next_page_link(get_url)
+        get_links = scrape_novidades(get_url)
+    return news[:amount]
