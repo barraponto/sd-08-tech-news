@@ -204,7 +204,7 @@ def get_tech_news(amount):
     count = 1
     while True:
         try:
-            search_news_request(amount, url, lista_info_noticias)
+            search_news_request(int(amount), url, lista_info_noticias)
             create_news(lista_info_noticias)
             return lista_info_noticias
         except Exception:
