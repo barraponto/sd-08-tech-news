@@ -102,12 +102,13 @@ def scrape_noticia(html_content):
 
 
 # Requisito 3
+# Pega a classe "tec--list__item" da div
+# segue passando pela tag h3 até o a href...
 def scrape_novidades(html_content):
     """Seu código deve vir aqui"""
     selector = Selector(text=html_content)
     return selector.css(
-            "div.tec--list tec--list--lg .tec--card__title__link > h3 > a::attr(href)"
-            # ".tec--list__item > article > div > h3 > a::attr(href)"
+            "div.tec--list__item h3 a::attr(href)"
     ).getall()
 
 # Requisito 4
