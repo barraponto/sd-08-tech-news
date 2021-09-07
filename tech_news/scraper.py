@@ -46,6 +46,11 @@ def get_comments_count(selector):
         return 0
 
 
+def get_summary(selector):
+    return ''.join(selector.css(
+        '.tec--article__body > p:nth-of-type(1) *::text').getall())
+
+
 def scrape_noticia(html_content):
     """Given HTML content, returns an object with selected data"""
     selector = Selector(html_content)
@@ -57,9 +62,7 @@ def scrape_noticia(html_content):
         'writer': get_writer(selector),
         'shares_count': get_shares_count(selector),
         'comments_count': get_comments_count(selector),
-        'summary': ''.join(selector.css(
-            '.tec--article__body p:first-child *::text'
-            ).getall()),
+        'summary': get_summary(selector),
         'sources': [source.strip() for source in selector.css(
             '.z--mb-16 .tec--badge::text'
             ).getall()],
