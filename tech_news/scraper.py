@@ -1,3 +1,4 @@
+from parsel import Selector
 from time import sleep
 import requests
 
@@ -16,7 +17,29 @@ def fetch(url):
 
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    """Given HTML content, returns an object with selected data"""
+    selector = Selector(html_content)
+
+    news_object = {
+        'url': selector.css('link[rel=canonical]::attr(href)').get(),
+        'title': selector.css('#js-article-title::text').get(),
+        'timestamp': selector.css('#js-article-date::attr(datetime)').get(),
+        'writer': selector.css('.tec--author__info__link::text').get().strip(),
+        'shares_count': 0,
+        'comments_count': int(
+            selector.css('#js-comments-btn::attr(data-count)').get()),
+        'summary': ''.join(selector.css(
+            '.tec--article__body p:first-child *::text'
+            ).getall()),
+        'sources': [source.strip() for source in selector.css(
+            '.z--mb-16 .tec--badge::text'
+            ).getall()],
+        'categories': [category.strip() for category in selector.css(
+            '#js-categories a::text'
+            ).getall()],
+    }
+
+    return news_object
 
 
 # Requisito 3
