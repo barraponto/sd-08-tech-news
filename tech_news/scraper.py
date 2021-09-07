@@ -25,7 +25,9 @@ def scrape_noticia(html_content):
         'title': selector.css('#js-article-title::text').get(),
         'timestamp': selector.css('#js-article-date::attr(datetime)').get(),
         'writer': selector.css('.tec--author__info__link::text').get().strip(),
-        'shares_count': 0,
+        'shares_count': int(
+            selector.css('.tec--toolbar__item::text').get()
+            .replace("Compartilharam", "").strip()),
         'comments_count': int(
             selector.css('#js-comments-btn::attr(data-count)').get()),
         'summary': ''.join(selector.css(
