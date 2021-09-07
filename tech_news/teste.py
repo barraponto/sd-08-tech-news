@@ -15,7 +15,7 @@ def fetch(url):
         return None
 
 
-resposne = fetch("https://www.tecmundo.com.br/mobilidade-urbana-smart-cities/155000-musk-tesla-carros-totalmente-autonomos.htm")
+resposne = fetch("https://www.tecmundo.com.br/mobilidade-u")
 
 
 def scrape_noticia(html_content):
