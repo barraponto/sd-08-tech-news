@@ -27,13 +27,13 @@ def get_writer(selector):
     # print('->' + writer)
     if writer is None:
         writer = selector.css(
-            ".tec--article__body-grid div div div div a::text"
+            "div.tec--article__body-grid  div div div div a::text"
         ).get()
         if writer is None:
             return None
         elif writer == " ":
             # print('->' + writer)
-            # writer ="XABLAU"
+            # return "XABLAU"
             return "Equipe TecMundo"
         else:
             # print('->' + writer)
@@ -140,5 +140,5 @@ def get_tech_news(amount):
             tech_news.append(scrape_noticia(html))
             if len(tech_news) == amount:
                 create_news(tech_news)
-                return tech_news
+                return tech_news[:amount]
         URL = scrape_next_page_link(news_text)
