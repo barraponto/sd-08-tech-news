@@ -82,26 +82,4 @@ def scrape_next_page_link(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
-    url_fetch = "https://www.tecmundo.com.br/novidades"
-    loops = (amount // 20.1) + 1
-    list_links = []
-    count_loops = 0
-    list_dict_news = []
-
-    while count_loops < loops:
-        html_content = fetch(url_fetch)
-        page_links_scraped = scrape_novidades(html_content)
-        url_fetch = scrape_next_page_link(html_content)
-        count_loops += 1
-        for link in page_links_scraped:
-            if len(list_links) < amount:
-                list_links.append(link)
-
-    for link in list_links:
-        html_content = fetch(link)
-        dict_news = scrape_noticia(html_content)
-        list_dict_news.append(dict_news)
-
-    create_news(list_dict_news)
-
-    return list_dict_news
+    pass

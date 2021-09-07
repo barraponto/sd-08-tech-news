@@ -7,8 +7,8 @@ from tech_news.analyzer.search_engine import (
     search_by_category,
 )
 import pytest
-from pymongo import MongoClient
-from decouple import config
+# from pymongo import MongoClient
+# from decouple import config
 
 from tech_news.database import db
 
