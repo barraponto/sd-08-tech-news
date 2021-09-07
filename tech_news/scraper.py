@@ -121,7 +121,6 @@ def scrape_next_page_link(html_content):
         return selector.css(".tec--btn::attr(href)").get()
     except Exception:
         return None
-    
 
 
 # Requisito 5
