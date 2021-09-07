@@ -58,3 +58,13 @@ def search_by_source(source):
 # Requisito 9
 def search_by_category(category):
     """Seu código deve vir aqui"""
+    news = db.find_news()
+    result = []
+
+    for info in news:
+        for tag in info["categories"]:
+            if tag.lower() == category.lower():
+                result.append(
+                    (info["title"], info["url"])
+                )
+    return result
