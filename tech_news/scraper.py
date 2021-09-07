@@ -16,7 +16,7 @@ def fetch(url):
             return response.text
     except (requests.ReadTimeout, requests.ConnectionError):
         return None
-    
+
     time.sleep(1)
 
 
@@ -31,7 +31,7 @@ def scrape_noticia(html_content):
       'shares_count': scrape_news_shares_count(html_content),
       'comments_count': scrape_news_comments_count(html_content),
       'summary': ''.join(
-          selector.css('.tec--article__body p:first-child *::text').getall()
+          selector.css('.tec--article__body > p:first-child *::text').getall()
       ),
       'sources': [
           source.strip() for source in
@@ -45,9 +45,6 @@ def scrape_noticia(html_content):
 
     return news_data_dict
 
-# news = fetch('https://www.tecmundo.com.br/minha-serie/224497-lucifer-novo-teaser-6-temporada-apresenta-figura-biblica.htm')
-# scrnews = scrape_noticia(news)
-# print(scrnews)
 
 def scrape_novidades(html_content):
     selector = Selector(text=html_content)
@@ -57,9 +54,6 @@ def scrape_novidades(html_content):
     ).getall()
     return news_links_list
 
-# news = fetch('https://www.tecmundo.com.br/novidades')
-# # print(news)
-# print(scrape_novidades(news))
 
 def scrape_next_page_link(html_content):
     selector = Selector(text=html_content)
@@ -71,17 +65,20 @@ def scrape_next_page_link(html_content):
 def get_tech_news(amount):
     pages_to_scrape = math.ceil(amount/20)
     url = 'https://www.tecmundo.com.br/novidades'
-    
+    news_list = []
+
     for _ in range(pages_to_scrape):
-      page = fetch(url)
-      news_links = scrape_novidades(page)
-      print(news_links)
+        page = fetch(url)
+        news_links = scrape_novidades(page)
 
-      for link in news_links:
-        # print(link)
-        print(scrape_noticia(link))
+        for link in news_links:
+            news_page = fetch(link)
+            scraped_news = scrape_noticia(news_page)
+            news_list.append(scraped_news)
+            if len(news_list) == amount:
+                break
+
         url = scrape_next_page_link(page)
-    
 
-
-get_tech_news(41)
+    create_news(news_list)
+    return news_list
