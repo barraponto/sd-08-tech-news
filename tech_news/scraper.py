@@ -2,6 +2,7 @@ import requests
 from parsel import Selector
 import time
 from requests.exceptions import HTTPError
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -126,3 +127,16 @@ def scrape_next_page_link(html_content):
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
+    url = fetch("https://www.tecmundo.com.br/novidades")
+    href = scrape_novidades(url)
+    news = []
+    while len(href) > 0:
+        for index in range(amount):
+            link = href[index]
+            searching_news = fetch(link)
+            if index > amount:
+                details_news = scrape_noticia(searching_news)
+                news.append(details_news)
+        url = scrape_next_page_link(url)
+        href = scrape_novidades(url)
+    return news
