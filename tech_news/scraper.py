@@ -1,6 +1,7 @@
 import requests
 import time
 from parsel import Selector
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -35,6 +36,8 @@ def scrape_noticia(html_content):
         'categories': [],
     }
 
+    is_none = None
+
     url_selector = Selector(text=html_content).css(
         'head >link:nth-child(26)::attr(href)').get()
     news_dict['url'] = url_selector
@@ -50,16 +53,25 @@ def scrape_noticia(html_content):
     writer_selector = Selector(text=html_content).css(
         '#js-author-bar > div > p.z--m-none.z--truncate.z--font-bold >'
         'a::text').get()
-    news_dict['writer'] = writer_selector.strip()
+    if writer_selector == is_none:
+        news_dict['writer'] = ''
+    else:
+        news_dict['writer'] = writer_selector.strip()
 
     shares_count_selector = Selector(text=html_content).css(
         '#js-author-bar > nav > div::text').get()
-    news_dict['shares_count'] = int(
-        ''.join(filter(str.isdigit, shares_count_selector)))
+    if shares_count_selector == is_none:
+        news_dict['shares_count'] = ''
+    else:
+        news_dict['shares_count'] = int(
+            ''.join(filter(str.isdigit, shares_count_selector)))
 
     comments_count_selector = Selector(text=html_content).css(
         '#js-comments-btn::attr(data-count)').get()
-    news_dict['comments_count'] = int(comments_count_selector)
+    if comments_count_selector == is_none:
+        news_dict['comments_count'] = ''
+    else:
+        news_dict['comments_count'] = int(comments_count_selector)
 
     summary_selector = Selector(text=html_content).css(
         '#js-main > div.z--container > article > div.tec--article__body-grid >'
@@ -112,9 +124,29 @@ def scrape_next_page_link(html_content):
     return next_page_selector
 
 
-scrape_next_page_link(fetch('https://www.tecmundo.com.br/novidades'))
+# scrape_next_page_link(fetch('https://www.tecmundo.com.br/novidades'))
 
 
 # Requisito 5
 def get_tech_news(amount):
     """Seu código deve vir aqui"""
+    page = 'https://www.tecmundo.com.br/novidades'
+    list_news = []
+    # print(len(list_news))
+    scrape_novi = scrape_novidades(fetch(page))
+    # count_news = len(scrape_novi)
+    # print(scrape_novi)
+    # print(len(scrape_novi))
+    while amount >= len(list_news):
+        for each_news in scrape_novi:
+            list_news.append(scrape_noticia(fetch(each_news)))
+            # print(list_news)
+            # print(len(list_news))
+            # print(page)
+            if amount == len(list_news):
+                create_news(list_news)
+                return list_news
+        page = scrape_next_page_link(fetch(page))
+
+
+# get_tech_news(41)
