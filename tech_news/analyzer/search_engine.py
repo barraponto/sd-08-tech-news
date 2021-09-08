@@ -1,6 +1,18 @@
+import re
+from tech_news.database import search_news
+
+
+def format(news_list):
+    return [
+        (list["title"], list["url"]) for list in news_list
+        ]
+
+
 # Requisito 6
 def search_by_title(title):
     """Seu código deve vir aqui"""
+    news = search_news({"title": re.compile(title, re.IGNORECASE)})
+    return format(news)
 
 
 # Requisito 7
