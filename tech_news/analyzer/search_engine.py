@@ -1,4 +1,5 @@
 from tech_news.database import search_news
+import re
 
 
 # Requisito 6
@@ -17,14 +18,17 @@ def search_by_date(date):
         raise ValueError("Data inválida")
     query = {"timestamp": {"$regex": f".*{date}.*"}}
     news_list = search_news(query)
-    tuples_list = [(news["title"], news["url"]) for news in news_list]
+    final_list = [(news["title"], news["url"]) for news in news_list]
 
-    return tuples_list
+    return final_list
 
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    query = {"sources": {"$regex": re.compile(source, re.IGNORECASE)}}
+    result = search_news(query)
+    news_found = [(news["title"], news["url"]) for news in result]
+    return news_found
 
 
 # Requisito 9
