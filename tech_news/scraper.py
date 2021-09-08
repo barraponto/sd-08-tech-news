@@ -34,6 +34,10 @@ def scrape_noticia(html_content):
             "div.tec--timestamp.tec--timestamp--lg > div.tec--timestamp__item."
             "z--font-bold > a::text"
         ).get()
+    elif writer[:2] == ' @':
+        writer = selector.css(
+            "#js-author-bar > div > p.z--m-none.z--truncate.z--font-bold::text"
+        ).get()
     shares_count = selector.css(
         "#js-author-bar > nav > div:nth-child(1)::text"
     ).get()
@@ -45,10 +49,7 @@ def scrape_noticia(html_content):
     summary = selector.css(
         "div.tec--article__body > p:nth-child(1) *::text"
     ).getall()
-    sources = selector.css(
-        "#js-main > div.z--container > article > div.tec--article__body-grid >"
-        "div.z--mb-16.z--px-16 > div > a::text"
-    ).getall()
+    sources = selector.css(".z--mb-16 .tec--badge::text").getall()
     categories = selector.css("a.tec--badge--primary ::text").getall()
     return {
         "url": url,
@@ -81,20 +82,20 @@ def scrape_next_page_link(html_content):
 
 
 # Requisito 5
-def get_tech_news(amount):
-    # """Seu código deve vir aqui"""
+def get_tech_news(quantidade):
     url = "https://www.tecmundo.com.br/novidades"
     lista_noticias = []
     pagina = fetch(url)
     lista_url = scrape_novidades(pagina)
-    for _ in range(ceil(amount / 20)):
-        size = 20 if amount >= 20 else amount - 20
-        for link in lista_url[:size]:
+    for _ in range(ceil(quantidade / 20)):
+        tamanho = 20 if quantidade >= 20 else quantidade - 20
+        for link in lista_url[:tamanho]:
             noticia = fetch(link)
             conteudo = scrape_noticia(noticia)
             lista_noticias.append(conteudo)
-        amount -= 20
-        proxima = scrape_next_page_link(url)
-        lista_url = scrape_novidades(proxima)
+        quantidade -= 20
+        proxima = scrape_next_page_link(pagina)
+        proxima_pagina = fetch(proxima)
+        lista_url = scrape_novidades(proxima_pagina)
     create_news(lista_noticias)
     return lista_noticias
