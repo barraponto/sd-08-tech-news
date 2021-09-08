@@ -18,6 +18,7 @@ def fetch(url):
     except requests.Timeout:
         return None
 
+
 def get_writer(selector):
     writer = selector.css(
         '.tec--author__info__link::text').get()
