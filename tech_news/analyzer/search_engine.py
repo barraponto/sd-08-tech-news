@@ -1,11 +1,25 @@
+from tech_news.database import search_news
+
+
 # Requisito 6
 def search_by_title(title):
-    """Seu código deve vir aqui"""
+    if title.isupper():
+        title = title.capitalize()
+
+    result = search_news({"title": {"$regex": title}})
+    array = []
+
+    for noticia in result:
+        array.append((noticia["title"], noticia["url"]))
+
+    print(array)
+
+    return array
 
 
 # Requisito 7
 def search_by_date(date):
-    """Seu código deve vir aqui"""
+    
 
 
 # Requisito 8
