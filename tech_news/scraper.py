@@ -17,41 +17,59 @@ def fetch(url):
 
 
 # Requisito 2
-def scrape_noticia(html_content):
-    selector = Selector(text=html_content)
-    news_link = selector.css("head link[rel=canonical]::attr(href)").get()
-    news_title = selector.css("h1.tec--article__header__title::text").get()
-    time = selector.css("div.tec--timestamp__item time::attr(datetime)").get()
-    news_writer = selector.css("a.tec--author__info__link::text").get()
-    if news_writer:
-        news_writer = news_writer.strip()
-    news_share = selector.css("div.tec--toolbar__item::text").get()
-    if news_share:
-        news_share = int((news_share.strip()).split(" ")[0])
-    else:
-        news_share = 0
-    news_comments = selector.css("div.tec--toolbar__item::text").get()
-    if news_comments:
-        news_comments = int((news_comments.strip()).split(" ")[0])
-    else:
-        news_comments = 0
-    news_summary = selector.css(
-        ".tec--article__body p:first-child *::text"
-    ).getall()
-    news_source = selector.css(".z--mb-16 .tec--badge::text").getall()
-    news_categories = selector.css("div#js-categories a::text").getall()
+def get_writer(selector):
+    writer = selector.css(
+        '.tec--author__info__link::text').get()
+    if not writer:
+        writer = selector.css(
+            '.tec--timestamp__item.z--font-bold a::text').get()
+    if not writer:
+        writer = selector.css(
+            '.tec--author__info p::text').get()
+    return writer.strip() if writer else None
 
-    return {
-        "url": news_link,
-        "title": news_title,
-        "timestamp": time,
-        "writer": news_writer,
-        "shares_count": news_share,
-        "comments_count": news_comments,
-        "summary": "".join(news_summary),
-        "sources": [source.strip() for source in news_source],
-        "categories": [category.strip() for category in news_categories],
+
+def get_shares_count(selector):
+    try:
+        return int(
+            selector.css('.tec--toolbar__item::text').get()
+            .replace("Compartilharam", "").strip())
+    except (AttributeError, TypeError):
+        return 0
+
+
+def get_comments_count(selector):
+    try:
+        return int(
+            selector.css('#js-comments-btn::attr(data-count)').get())
+    except (AttributeError, TypeError):
+        return 0
+
+
+def get_summary(selector):
+    return ''.join(selector.css(
+        '.tec--article__body > p:nth-of-type(1) *::text').getall())
+
+
+def scrape_noticia(html_content):
+    selector = Selector(html_content)
+    news_object = {
+        'url': selector.css('link[rel=canonical]::attr(href)').get(),
+        'title': selector.css('#js-article-title::text').get(),
+        'timestamp': selector.css('#js-article-date::attr(datetime)').get(),
+        'writer': get_writer(selector),
+        'shares_count': get_shares_count(selector),
+        'comments_count': get_comments_count(selector),
+        'summary': get_summary(selector),
+        'sources': [source.strip() for source in selector.css(
+            '.z--mb-16 .tec--badge::text'
+            ).getall()],
+        'categories': [category.strip() for category in selector.css(
+            '#js-categories a::text'
+            ).getall()],
     }
+
+    return news_object
 
 
 # Requisito 3
@@ -75,20 +93,17 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    news = []
     url = "https://www.tecmundo.com.br/novidades"
-
-    get_url = fetch(url)
-    get_links = scrape_novidades(get_url)
-
-    while len(get_links) > 0:
-        for i in range(amount):
-            link = get_links[i]
-            searching_news = fetch(link)
-            if i > amount:
-                details_news = scrape_noticia(searching_news)
-                news.append(details_news)
-        get_url = scrape_next_page_link(get_url)
-        get_links = scrape_novidades(get_url)
-    create_news(news[:amount])
-    return news[:amount]
+    tech_news = []
+    while len(tech_news) < amount:
+        current_page = fetch(url)
+        url_list = scrape_novidades(current_page)
+        for url in url_list:
+            content = fetch(url)
+            news = scrape_noticia(content)
+            tech_news.append(news)
+            if len(tech_news) >= amount:
+                break
+        url = scrape_next_page_link(current_page)
+    create_news(tech_news)
+    return tech_news
