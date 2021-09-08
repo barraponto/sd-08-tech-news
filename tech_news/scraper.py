@@ -2,7 +2,6 @@ import requests
 from parsel import Selector
 import time
 from requests.exceptions import HTTPError
-from tech_news.database import create_news
 
 
 # Requisito 1
