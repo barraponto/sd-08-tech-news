@@ -19,7 +19,7 @@ def search_by_title(title):
 
 # Requisito 7
 def search_by_date(date):
-    
+    """Seu código deve vir aqui"""
 
 
 # Requisito 8
