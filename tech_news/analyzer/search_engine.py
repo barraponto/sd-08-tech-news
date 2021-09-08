@@ -9,7 +9,7 @@ def search_by_title(title):
     notícia com sucesso, tanto pelo título em maiúsculas como em minúsculas."""
 
     # https://www.w3schools.com/python/python_mongodb_query.asp
-    myquery = {"title": {"$regex": title, "$options": 'i'}}
+    myquery = {"title": {"$regex": title, "$options": "i"}}
 
     search_results = search_news(myquery)
     return [(result["title"], result["url"]) for result in search_results]
@@ -21,7 +21,7 @@ def search_by_date(date):
 
     # https://qastack.com.br/programming/16870663/how-do-i-validate-a-date-string-format-in-python
     try:
-        datetime.strptime(date, '%Y-%m-%d')
+        datetime.strptime(date, "%Y-%m-%d")
     except ValueError:
         raise ValueError("Data inválida")
 
@@ -35,6 +35,13 @@ def search_by_date(date):
 # Requisito 8
 def search_by_source(source):
     """Seu código deve vir aqui"""
+
+    myquery = {
+        "sources": {"$elemMatch": {"$regex": source, "$options": "i"}}
+    }
+    search_results = search_news(myquery)
+
+    return [(result["title"], result["url"]) for result in search_results]
 
 
 # Requisito 9
