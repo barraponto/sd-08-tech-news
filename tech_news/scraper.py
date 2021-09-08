@@ -39,7 +39,7 @@ def scrape_noticia(html_content):
     )
 
     comments_count = selector.css(
-        '.tec--toolbar__item > button::text').re_first('d+')
+        '.tec--toolbar__item > button::text').re_first(r'\d+')
     info_object["comments_count"] = int(comments_count)
 
     summarySelectors = selector.css(
