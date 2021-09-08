@@ -56,6 +56,6 @@ def search_by_category(category):
     for each_news in list_news:
         print(each_news)
         result_list.append((each_news["title"], each_news["url"]))
-        print(result_list)
+        # print(result_list)
 
     return result_list
