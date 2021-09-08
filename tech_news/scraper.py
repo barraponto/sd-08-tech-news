@@ -62,7 +62,16 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    """Returns a list of urls for recent news"""
+    selector = Selector(html_content)
+
+    news_url_list_selectors = selector.css(
+        '.tec--main .tec--card__title__link::attr(href)')
+    news_url_list = (
+        [selector.get() for selector in news_url_list_selectors
+            if selector is not None]
+    )
+    return news_url_list
 
 
 # Requisito 4
