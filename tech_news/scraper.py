@@ -48,7 +48,7 @@ def scrape_noticia(html_content):
       "title": selector.css("h1.tec--article__header__title::text").get(),
       "timestamp": selector
       .css("div.tec--timestamp__item time::attr(datetime)").get(),
-      "writer": writer,
+      "writer": writer.strip(),
       "shares_count": share,
       "comments_count": int(
         selector.css("div.tec--toolbar__item button::attr(data-count)").get()),
