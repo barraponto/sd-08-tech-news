@@ -51,7 +51,7 @@ def scrape_noticia(html_content):
         selector.css("#js-comments-btn::attr(data-count)").get()
     )
     get_summary = selector.css(
-        ".tec--article__body p:first-child *::text"
+        ".tec--article__body p:nth-of-type(1) *::text"
     ).getall()
 
     summary = "".join(get_summary)
