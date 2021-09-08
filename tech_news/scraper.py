@@ -119,6 +119,6 @@ def get_tech_news(amount):
         dit_news = scrape_noticia(fetch(novidades[index]))
         result.append(dit_news)
         index += 1
-        amount-= 1
+        amount -= 1
     create_news(result)
     return result
