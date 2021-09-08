@@ -18,6 +18,17 @@ def fetch(url):
     except requests.Timeout:
         return None
 
+def get_writer(selector):
+    writer = selector.css(
+        '.tec--author__info__link::text').get()
+    if not writer:
+        writer = selector.css(
+            '.tec--timestamp__item.z--font-bold a::text').get()
+    if not writer:
+        writer = selector.css(
+            '.tec--author__info p::text').get()
+    return writer.strip() if writer else None
+
 
 # Requisito 2
 def scrape_noticia(html_content):
@@ -27,8 +38,8 @@ def scrape_noticia(html_content):
     title = selector.css(".tec--article__header__title::text").get()
     timestamp = selector.css("#js-article-date::attr(datetime)").get()
 
-    get_writer = selector.css(".tec--author__info__link::text").get()
-    writer = get_writer.strip() if get_writer else None
+    # get_writer = selector.css(".tec--author__info__link::text").get()
+    # writer = get_writer.strip() if get_writer else None
 
     get_shares_count = selector.css(
         "#js-author-bar > nav > div:nth-child(1)::text"
@@ -52,7 +63,7 @@ def scrape_noticia(html_content):
         "url": url,
         "title": title,
         "timestamp": timestamp,
-        "writer": writer,
+        "writer": get_writer(selector),
         "shares_count": share_count,
         "comments_count": comments_count,
         "summary": summary,
