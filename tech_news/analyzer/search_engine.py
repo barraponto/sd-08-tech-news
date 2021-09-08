@@ -4,10 +4,7 @@ import datetime
 
 # Requisito 6
 def search_by_title(title):
-    if title.isupper():
-        title = title.capitalize()
-
-    result = search_news({"title": {"$regex": title}})
+    result = search_news({"title": {"$regex": title, "$options": "i"}})
     noticias = []
 
     for noticia in result:
@@ -34,7 +31,13 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    result = search_news({"sources": {"$regex": source, "$options": "i"}})
+    noticias = []
+
+    for noticia in result:
+        noticias.append((noticia["title"], noticia["url"]))
+
+    return noticias
 
 
 # Requisito 9
