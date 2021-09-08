@@ -1,7 +1,6 @@
 import requests
 import time
 from parsel import Selector
-from requests.sessions import should_bypass_proxies
 
 
 # Requisito 1
@@ -22,7 +21,7 @@ def scrape_noticia(html_content):
     info_object = {}
     selector = Selector(html_content)
 
-    url = selector.css('link[rel="amphtml"]::attr(href)').get()
+    url = selector.css('link[rel="canonical"]::attr(href)').get()
     info_object["url"] = url
 
     title = selector.css('.tec--article__header__title::text').get()
@@ -32,21 +31,33 @@ def scrape_noticia(html_content):
     info_object["timestamp"] = timestamp
 
     writer = selector.css('.tec--author__info__link::text').get()
-    info_object["writer"] = writer.strip() if writer != None else None
+    info_object["writer"] = writer.strip() if writer is not None else None
 
-    shares_count = selector.css('.tec--toolbar__item::text').re_first('\d+')
-    info_object["shares_count"] = int(shares_count) if shares_count != None else 0
+    shares_count = selector.css('.tec--toolbar__item::text').re_first('d+')
+    info_object["shares_count"] = (
+        int(shares_count) if shares_count is not None else 0
+    )
 
-    comments_count = selector.css('.tec--toolbar__item > button::text').re_first('\d+')
+    comments_count = selector.css(
+        '.tec--toolbar__item > button::text').re_first('d+')
     info_object["comments_count"] = int(comments_count)
 
-    summarySelectors = selector.css('.tec--article__body p:first-child').css('*::text')
+    summarySelectors = selector.css(
+        '.tec--article__body p:first-child').css('*::text')
     summary = [selector.get() for selector in summarySelectors]
     summary = ''.join(summary)
     info_object["summary"] = summary
 
-    print(info_object)
+    sourcesSelectors = selector.css(
+        'h2:contains("Fontes") + div').css('a::text')
+    sources = [selector.get().strip() for selector in sourcesSelectors]
+    info_object["sources"] = sources
 
+    categoriesSelector = selector.css('#js-categories > a::text')
+    categories = [selector.get().strip() for selector in categoriesSelector]
+    info_object["categories"] = categories
+
+    return info_object
 
 
 # Requisito 3
