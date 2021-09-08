@@ -29,15 +29,17 @@ def scrape_noticia(html_content):
 
     selector = Selector(text=html_content)
 
+    # Solução desenvovida pela Aline Debastiani - Turma 8
+    # https://github.com/tryber/sd-08-tech-news/blob/aline-tech-news/tech_news/scraper.py
     url = selector.css("head link[rel=canonical]::attr(href)").get()
 
     title = selector.css("#js-article-title::text").get()
 
     timestamp = selector.css("#js-article-date::attr(datetime)").get()
 
-    writer = selector.css(
-        ".z--font-bold *::text"
-    ).get()
+    # Solução desenvovida pelo Erik Massaki - Turma 8
+    # https://github.com/tryber/sd-08-tech-news/blob/eric-massaki-tech-news-project/tech_news/scraper.py
+    writer = selector.css(".z--font-bold *::text").get()
     if writer:
         writer = writer.strip()
 
@@ -97,7 +99,8 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    """A função create_news do tech_news/database.py é chamada corretamente;
+    Retorna a quantidade correta de notícias"""
 
     html_content = fetch("https://www.tecmundo.com.br/novidades")
 

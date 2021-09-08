@@ -32,6 +32,7 @@ def find_news():
 
 
 def search_news(query):
+    print(query)
     return list(db.news.find(query))
 
 
