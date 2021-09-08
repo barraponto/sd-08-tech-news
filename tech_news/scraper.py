@@ -17,6 +17,7 @@ def fetch(url):
         return None
 
 # https://algoritmosempython.com.br/cursos/programacao-python/strings/
+# "js-author-bar > div > p.z--m-none.z--truncate.z--font-bold > p::text"
 
 
 # Requisito 2

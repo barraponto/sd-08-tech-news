@@ -8,6 +8,22 @@ testes
 + o q é esperado de
 - é o que não é esperado
 
+/////////////////////////////////////////////
+writer = (
+        selector.css(".tec--author__info__link::text").get().strip()
+        if len(selector.css(".tec--author__info__link")) >= 1
+        else None
+    )
+    return writer
+ou
+
+# if selector.css(".tec--author__info__link::text").get() is None:
+    #     return None
+    # writer = selector.css(".tec--author__info__link::text").get()
+    # return writer.strip()
+
+
+
 ; def get_tech_news(amount):
 ;     tech_news = []
 ;     html = fetch("https://www.tecmundo.com.br/novidades")
@@ -25,3 +41,7 @@ https://www.geeksforgeeks.org/string-capitalize-python/
 https://www.kite.com/python/answers/how-to-validate-a-date-string-format-in-python
 
 https://pt.stackoverflow.com/questions/272539/regex-para-validar-determinado-formato-de-data
+
+ https://www.geeksforgeeks.org/python-accessing-nth-element-from-tuples-in-list/
+
+https://www.kite.com/python/answers/how-to-sort-a-%60counter%60-object-by-count-in-python
