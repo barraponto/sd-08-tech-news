@@ -1,6 +1,17 @@
+from tech_news.database import search_news
+import re
+
+
 # Requisito 6
 def search_by_title(title):
-    """Seu código deve vir aqui"""
+    """https://
+    www.geeksforgeeks.org/name-validation-using-ignorecase-in-python-regex/"""
+    find_title = {"title": re.compile(title, re.IGNORECASE)}
+    get_news_by_title = search_news(find_title)
+    news_list = []
+    for news in get_news_by_title:
+        news_list.append((news["title"], news["url"]))
+    return news_list
 
 
 # Requisito 7
