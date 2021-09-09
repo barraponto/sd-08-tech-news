@@ -1,5 +1,6 @@
 import requests
 import time
+from parsel import Selector
 
 from tech_news.GetScrapeNoticia import GetScrapeNoticia
 
@@ -26,6 +27,10 @@ def scrape_noticia(html_content):
 # Requisito 3
 def scrape_novidades(html_content):
     """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+    return selector.css(
+        ".tec--list .tec--card .tec--card__thumb__link::attr(href)"
+    ).getall()
 
 
 # Requisito 4
