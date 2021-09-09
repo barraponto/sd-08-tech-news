@@ -54,17 +54,17 @@ def scrape_noticia(html_content):
         '#js-author-bar > div > p.z--m-none.z--truncate.z--font-bold >'
         'a::text').get()
 
-    if not writer_selector:
-        writer_selector = Selector(text=html_content).css(
-            '#js-main > div > article > div.tec--article__body-grid >'
-            'div.z--pt-40.z--pb-24 > div.z--flex.z--items-center >'
-            'div.tec--timestamp.tec--timestamp--lg >'
-            'div.tec--timestamp__item.z--font-bold > a::text').get()
+    # if not writer_selector:
+    #     writer_selector = Selector(text=html_content).css(
+    #         '#js-main > div > article > div.tec--article__body-grid >'
+    #         'div.z--pt-40.z--pb-24 > div.z--flex.z--items-center >'
+    #         'div.tec--timestamp.tec--timestamp--lg >'
+    #         'div.tec--timestamp__item.z--font-bold > a::text').get()
 
-    if not writer_selector:
-        writer_selector = Selector(text=html_content).css(
-            '#js-author-bar > div >'
-            'p.z--m-none.z--truncate.z--font-bold::text').get()
+    # if not writer_selector:
+    #     writer_selector = Selector(text=html_content).css(
+    #         '#js-author-bar > div >'
+    #         'p.z--m-none.z--truncate.z--font-bold::text').get()
 
     if writer_selector == is_none:
         news_dict['writer'] = ''
@@ -119,8 +119,7 @@ def scrape_noticia(html_content):
     return news_dict
 
 
-news_page = 'https://www.tecmundo.com.br/minha-serie/215330-8-series-parecidas-the-crown-fas-realeza.htm'
-scrape_noticia(fetch(news_page))
+# scrape_noticia(fetch(news_page))
 
 
 # Requisito 3

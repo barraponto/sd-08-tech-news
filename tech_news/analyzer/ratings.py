@@ -5,6 +5,7 @@ from operator import itemgetter
 # Requisito 10
 def top_5_news():
     """Seu código deve vir aqui"""
+    # https://docs.python.org/pt-br/dev/howto/sorting.html
     list_news = find_news()
     news_populary = list()
 
