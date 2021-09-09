@@ -57,3 +57,16 @@ def search_by_source(source):
 # Requisito 9
 def search_by_category(category):
     """Seu código deve vir aqui"""
+    search_category = list(
+        db.news.find(
+            {
+                "categories": {
+                    "$elemMatch": {"$regex": category, "$options": "i"}
+                }
+            },
+            {"_id": 0, "title": 1, "url": 1},
+        )
+    )
+    if len(search_category) == 0:
+        return search_category
+    return [(search_category[0]["title"], search_category[0]["url"])]
