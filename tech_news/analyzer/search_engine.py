@@ -52,4 +52,3 @@ def search_by_category(category):
                 result = (new["title"], new["url"])
                 cat_list.append(result)
     return cat_list
-    

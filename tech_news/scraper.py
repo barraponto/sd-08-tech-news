@@ -117,4 +117,3 @@ def get_tech_news(amount):
             news_list = fetch(next_link)
     create_news(news)
     return news
-    
