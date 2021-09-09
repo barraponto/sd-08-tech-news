@@ -20,6 +20,35 @@ def fetch(url):
 # Requisito 2
 def scrape_noticia(html_content):
     """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    return {
+        "url": selector.css("link[rel=canonical]::attr(href)").get(),
+        "title": selector.css("#js-article-title ::text").get(),
+
+        "timestamp": selector.css("#js-article-date::attr(datetime)").get(),
+
+        "writer": selector.css(".tec--author__info__link::text").get().strip(),
+
+        "shares_count": int(
+            selector.css(".tec--toolbar__item::text")
+            .get()
+            .strip()
+            .split(" ")[0]),
+
+        "comments_count": int(
+            selector.css("#js-comments-btn::attr(data-count)").get()
+        ),
+
+        "summary": "".join(
+            selector.css(
+                ".tec--article__body > p *::text"
+                ).getall()
+        ),
+
+        "sources": selector.css(".z--mb-16 > div > a::text").getall(),
+
+        "categories": selector.css("div#js-categories a::text").getall()
+    }
 
 
 # Requisito 3
