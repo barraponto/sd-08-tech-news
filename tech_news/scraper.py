@@ -105,6 +105,7 @@ def get_tech_news(amount):
     html_content = fetch("https://www.tecmundo.com.br/novidades")
 
     news_urls = scrape_novidades(html_content)
+    # print(news_urls)
 
     data_news = []
 
@@ -115,10 +116,14 @@ def get_tech_news(amount):
             next_page_url = scrape_next_page_link(html_content)
             next_page_html_content = fetch(next_page_url)
             news_urls = scrape_novidades(next_page_html_content)
-            index_factor = index - 1
+            index_factor = index
+            # print("DENTRO DO IF", index, index_factor, news_urls)
 
+        # print(index, (index - index_factor))
+        # print(news_urls[index - index_factor])
         new_html_content = fetch(news_urls[index - index_factor])
         single_data_new = scrape_noticia(new_html_content)
+        # print(single_data_new)
         data_news.append(single_data_new)
 
     create_news(data_news)
