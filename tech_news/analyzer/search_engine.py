@@ -47,8 +47,8 @@ def search_by_category(category):
     news = db.find_news()
     news_list = []
     for item in news:
-        for y in item["categories"]:
-            if y.lower() == category.lower():
+        for cat in item["categories"]:
+            if cat.lower() == category.lower():
                 result = (item["title"], item["url"])
                 news_list.append(result)
     return news_list
