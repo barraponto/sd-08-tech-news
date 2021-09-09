@@ -14,6 +14,7 @@ def search_by_title(title):
     search_title_list = search_news(title_regex)
     return [(new["title"], new["url"]) for new in search_title_list]
 
+
 # Requisito 7
 def search_by_date(date):
     """Seu código deve vir aqui"""
