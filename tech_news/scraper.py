@@ -3,7 +3,7 @@ from math import ceil
 import requests
 import time
 from tech_news.database import create_news
-from pprint import pprint
+# from pprint import pprint
 
 
 # Requisito 1
