@@ -21,7 +21,7 @@ def search_by_date(date):
     """Seu código deve vir aqui"""
     try:
         format_date = "%Y-%m-%d"
-        datetime.strptime(date, format_date)
+        datetime.datetime.strptime(date, format_date)
         regex_date = {"timestamp": {"$regex": date}}
         search_list_date = search_news(regex_date)
         return [(new["title"], new["url"]) for new in search_list_date]
