@@ -1,6 +1,15 @@
+import re
+from tech_news.database import find_news
+
+
 # Requisito 6
 def search_by_title(title):
-    """Seu código deve vir aqui"""
+    news = find_news()
+    return [
+        (single_news["title"], single_news["url"])
+        for single_news in news
+        if re.match(title, single_news["title"], re.IGNORECASE) is not None
+    ]
 
 
 # Requisito 7
