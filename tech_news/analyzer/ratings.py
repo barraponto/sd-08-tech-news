@@ -28,6 +28,32 @@ def top_5_news():
     return list_ranking
 
 
+def ranking_categories(data):
+    list_ranking = []
+    if len(data) >= 5:
+        for ranking in data[:5]:
+            ranking_print = (ranking[1])
+            list_ranking.append(ranking_print)
+        return list_ranking
+    else:
+        for console in data[:5]:
+            ranking_print = (console[1])
+            list_ranking.append(ranking_print)
+        for pc in data[:5]:
+            ranking_print = (pc[0])
+            list_ranking.append(ranking_print)
+        return list_ranking
+
+
 # Requisito 11
 def top_5_categories():
     """Seu código deve vir aqui"""
+    list_news = find_news()
+    list_categories = []
+
+    for each_news in list_news:
+        list_categories.append(each_news["categories"])
+
+    ranking_top_5 = sorted(list_categories, key=itemgetter(1))
+
+    return ranking_categories(ranking_top_5)
