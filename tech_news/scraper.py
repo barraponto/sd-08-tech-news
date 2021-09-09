@@ -1,6 +1,8 @@
 import requests
 import time
 
+from tech_news.GetScrapeNoticia import GetScrapeNoticia
+
 
 # Requisito 1
 def fetch(url):
@@ -18,6 +20,7 @@ def fetch(url):
 # Requisito 2
 def scrape_noticia(html_content):
     """Seu código deve vir aqui"""
+    return GetScrapeNoticia(html_content).news_dictionary()
 
 
 # Requisito 3
