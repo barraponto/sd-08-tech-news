@@ -53,6 +53,19 @@ def scrape_noticia(html_content):
     writer_selector = Selector(text=html_content).css(
         '#js-author-bar > div > p.z--m-none.z--truncate.z--font-bold >'
         'a::text').get()
+
+    if not writer_selector:
+        writer_selector = Selector(text=html_content).css(
+            '#js-main > div > article > div.tec--article__body-grid >'
+            'div.z--pt-40.z--pb-24 > div.z--flex.z--items-center >'
+            'div.tec--timestamp.tec--timestamp--lg >'
+            'div.tec--timestamp__item.z--font-bold > a::text').get()
+
+    if not writer_selector:
+        writer_selector = Selector(text=html_content).css(
+            '#js-author-bar > div >'
+            'p.z--m-none.z--truncate.z--font-bold::text').get()
+
     if writer_selector == is_none:
         news_dict['writer'] = ''
     else:
@@ -61,7 +74,7 @@ def scrape_noticia(html_content):
     shares_count_selector = Selector(text=html_content).css(
         '#js-author-bar > nav > div::text').get()
     if shares_count_selector == is_none:
-        news_dict['shares_count'] = ''
+        news_dict['shares_count'] = 0
     else:
         news_dict['shares_count'] = int(
             ''.join(filter(str.isdigit, shares_count_selector)))
@@ -74,30 +87,40 @@ def scrape_noticia(html_content):
         news_dict['comments_count'] = int(comments_count_selector)
 
     summary_selector = Selector(text=html_content).css(
-        '#js-main > div.z--container > article > div.tec--article__body-grid >'
-        'div.tec--article__body.z--px-16.p402_premium >'
-        'p:nth-child(1) *::text').getall()
-    # print(summary_selector)
-    summary = [summary.strip() for summary in summary_selector]
+        '.tec--article__body > p:first-of-type *::text').getall()
+
+    # print('antes do IF', summary_selector)
+    # if len(summary_selector) == 0:
+    #     summary_selector = Selector(text=html_content).css(
+    #         '#js-main > div > article > div.tec--article__body-grid >'
+    #         'div.tec--article__body.p402_premium >'
+    #         'p:nth-child(1) *::text').getall()
+
+    # print('depois do IF', summary_selector)
+    summary = [summary for summary in summary_selector]
     # print(summary)
-    news_dict['summary'] = ' '.join(summary)
+    news_dict['summary'] = ''.join(summary)
 
     sources_selector = Selector(text=html_content).css(
-        '#js-main > div.z--container > article > div.tec--article__body-grid >'
-        'div.z--mb-16.z--px-16 > div > a::text').getall()
+        "[class='tec--badge']::text").getall()
     sources = [source.strip() for source in sources_selector]
     news_dict['sources'] = sources
 
     categories_selector = Selector(text=html_content).css(
         '#js-categories > a::text').getall()
+
+    if not categories_selector:
+        categories_selector = Selector(text=html_content).css(
+            '#js-categories > a:nth-child::text').getall()
     categories = [categorie.strip() for categorie in categories_selector]
-    # print(categories_selector)
+    print(categories_selector)
     news_dict['categories'] = categories
     # print(news_dict)
     return news_dict
 
 
-# scrape_noticia(fetch(news_page))
+news_page = 'https://www.tecmundo.com.br/minha-serie/215330-8-series-parecidas-the-crown-fas-realeza.htm'
+scrape_noticia(fetch(news_page))
 
 
 # Requisito 3
@@ -132,8 +155,8 @@ def get_tech_news(amount):
     """Seu código deve vir aqui"""
     page = 'https://www.tecmundo.com.br/novidades'
     list_news = []
-    # print(len(list_news))
     scrape_novi = scrape_novidades(fetch(page))
+    # print(len(list_news))
     # count_news = len(scrape_novi)
     # print(scrape_novi)
     # print(len(scrape_novi))
