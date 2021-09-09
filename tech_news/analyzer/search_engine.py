@@ -24,8 +24,8 @@ def search_by_date(date):
         dateRegex = fr'^{date}'
         date_regex = re.compile(dateRegex)
         query = {"timestamp": date_regex}
-        news_by_title = search_news(query)
-        return [(news['title'], news['url']) for news in news_by_title]
+        news_by_date = search_news(query)
+        return [(news['title'], news['url']) for news in news_by_date]
     except (ValueError):
         raise ValueError('Data inválida')
 
@@ -33,8 +33,14 @@ def search_by_date(date):
 # Requisito 8
 def search_by_source(source):
     """Seu código deve vir aqui"""
+    source_regex = re.compile(source, re.IGNORECASE)
+    news_by_source = search_news({"sources": source_regex})
+    return [(news['title'], news['url']) for news in news_by_source]
 
 
 # Requisito 9
 def search_by_category(category):
     """Seu código deve vir aqui"""
+    category_regex = re.compile(category, re.IGNORECASE)
+    news_by_category = search_news({"categories": category_regex})
+    return [(news['title'], news['url']) for news in news_by_category]
