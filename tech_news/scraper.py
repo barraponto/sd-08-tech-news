@@ -2,6 +2,7 @@ import requests
 from parsel import Selector
 import time
 from requests.exceptions import HTTPError
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -42,7 +43,7 @@ def scrape_noticia(html_content):
 
     # Extrai o nome do autor. Apenas a classe após o href é suficiente
     # É necessário usar o strip() pois ao final do nome um espaço é retornado
-    writer = selector.css(".tec--author__info__link::text").get().strip()
+    writer = selector.css(".tec--author__info__link::text").get() or ""
 
     # Extrai a quantidade de comentários usando a classe tec--toolbar__item,
     # o id js-comments-btn e o atributo 'data-count'
@@ -50,6 +51,7 @@ def scrape_noticia(html_content):
         selector.css(
             "div.tec--toolbar__item #js-comments-btn ::attr(data-count)"
         ).get()
+        or "0"
     )
 
     # Tive dificuldade para entender onde achar...
@@ -60,6 +62,7 @@ def scrape_noticia(html_content):
     # fonte (https://developer.mozilla.org/pt-BR/docs/Web/CSS/:nth-child)
     shares_count = int(
         selector.css(".tec--toolbar__item::text").get().strip().split()[0]
+        or "0"
     )
 
     # extrai o texto da tag p e pseudo-classe nth-child(1)
@@ -67,9 +70,7 @@ def scrape_noticia(html_content):
     # fonte: (https://stackoverflow.com/questions/38182972/
     # python-scrapy-cant-get-pseudo-class-not)
     summary = "".join(
-        selector.css(
-            "div.tec--article__body p:nth-child(1) ::text"
-        ).getall()
+        selector.css("div.tec--article__body p:nth-child(1) ::text").getall()
     )
 
     # cria uma lista com as fontes da notícia
@@ -91,7 +92,7 @@ def scrape_noticia(html_content):
         "url": url,
         "title": title,
         "timestamp": timestamp,
-        "writer": writer,
+        "writer": writer.strip(),
         "shares_count": shares_count,
         "comments_count": comments_count,
         "summary": summary,
@@ -107,9 +108,7 @@ def scrape_noticia(html_content):
 def scrape_novidades(html_content):
     """Seu código deve vir aqui"""
     selector = Selector(text=html_content)
-    return selector.css(
-            "div.tec--list__item h3 a::attr(href)"
-    ).getall()
+    return selector.css("div.tec--list__item h3 a::attr(href)").getall()
 
 
 # Requisito 4
@@ -138,4 +137,5 @@ def get_tech_news(amount):
                 news.append(details_news)
         url = scrape_next_page_link(url)
         href = scrape_novidades(url)
+    create_news(news)
     return news
