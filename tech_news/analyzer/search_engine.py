@@ -1,7 +1,18 @@
+from tech_news.database import search_news
+
+
 # Requisito 6
 def search_by_title(title):
     """Seu código deve vir aqui"""
-
+    # $regex- Fornece recursos de expressão regular para strings
+    # de correspondência de padrões em consultas. O MongoDB usa
+    # expressões regulares compatíveis com Perl (ou seja, "PCRE")
+    # versão 8.42 com suporte a UTF-8.
+    # fonte: docs.mongodb.com/manual/reference/operator/query/regex/
+    # $option: "i" Perform Case-Insensitive Regular Expression Match
+    title_regex = {"title": {"$regex": title, "$options": "i"}}
+    search_title_list = search_news(title_regex)
+    return [(new["title"], new["url"]) for new in search_title_list]
 
 # Requisito 7
 def search_by_date(date):

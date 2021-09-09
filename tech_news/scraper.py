@@ -128,7 +128,7 @@ def get_tech_news(amount):
     url = fetch("https://www.tecmundo.com.br/novidades")
     href = scrape_novidades(url)
     news = []
-    while len(href) > 0:
+    while len(news) < amount:
         for index in range(amount):
             link = href[index]
             searching_news = fetch(link)
