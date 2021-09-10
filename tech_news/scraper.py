@@ -82,7 +82,13 @@ def scrape_novidades(html_content):
 
 # Requisito 4
 def scrape_next_page_link(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+
+    xpath_query = "//a[text()=' Mostrar mais notícias ']/@href"
+
+    next_page_url = selector.xpath(xpath_query).get()
+
+    return next_page_url
 
 
 # Requisito 5
