@@ -41,7 +41,7 @@ def fetch(url):
         if request.status_code != 200:
             return None
         return request.text
-    except requests.Timeout:
+    except (requests.Timeout, requests.HTTPError):
         return None
 
 
@@ -62,7 +62,7 @@ def scrape_noticia(html_content):
         "shares_count": get_shares_count(selector),
         "comments_count": get_comments_count(selector),
         "summary": "".join(selector.css(
-            '.tec--article__body p:first_child ::text'
+            '.tec--article__body > p:nth-of-type(1) *::text'
         ).getall()),
         "sources": sources,
         "categories": categories,
