@@ -88,9 +88,9 @@ def scrape_next_page_link(html_content):
 def get_tech_news(amount):
     url = 'https://www.tecmundo.com.br/novidades'
     news = []
-    page = fetch(url)
-    links = scrape_novidades(page)
     while len(news) < amount:
+        page = fetch(url)
+        links = scrape_novidades(page)
         for url in links:
             html = fetch(url)
             formatted_new = scrape_noticia(html)
@@ -98,7 +98,5 @@ def get_tech_news(amount):
             if (len(news) >= amount):
                 break
         url = scrape_next_page_link(page)
-        page = fetch(url)
-        links = scrape_novidades(page)
     create_news(news)
     return news
