@@ -2,6 +2,7 @@ import requests
 import time
 import re
 from parsel import Selector
+from tech_news.database import create_news
 
 
 # Requisito 1
@@ -9,7 +10,7 @@ def fetch(url):
     time.sleep(1)
 
     try:
-        response = requests.get(url, timeout=3)
+        response = requests.get(url)
     except requests.ReadTimeout:
         return None
 
@@ -19,7 +20,36 @@ def fetch(url):
         return None
 
 
+def multi_fetch(url, tries=10):
+    html = None
+    counter = tries
+
+    while counter > 0:
+        html = fetch(url)
+        if html is not None:
+            break
+        counter -= 1
+
+    return html
+
+
 # Requisito 2
+def data_cleanup(query_result, element):
+    result = query_result
+
+    if "count" in element[0]:
+        try:
+            print(result)
+            result = int(re.sub(r"\D", "", "".join(result)))
+        except ValueError:
+            result = 0
+
+    if element[0] == "summary":
+        result = "".join(result)
+
+    return result
+
+
 def scrape_noticia(html_content):
     selector = Selector(html_content)
     news_info = {}
@@ -28,13 +58,28 @@ def scrape_noticia(html_content):
         ("url", "//head/link[@rel='canonical']/@href"),
         ("title", "//h1[@id='js-article-title']/text()"),
         ("timestamp", "//time[@id='js-article-date']/@datetime"),
-        ("writer", "//a[@class='tec--author__info__link']/text()"),
-        ("shares_count", "//div[@class='tec--toolbar__item'][1]/text()"),
-        ("comments_count", "//button[@id='js-comments-btn']/text()[2]"),
+        (
+            "writer",
+            (
+                "(//a["
+                "contains(@href,'https://www.tecmundo.com.br/autor/')"
+                "and not(contains(., '<img'))]"
+                "|"
+                "//div[contains(@class, 'tec--author__info')]/p[1])/text()"
+            ),
+        ),
+        (
+            "shares_count",
+            (
+                "//div[contains(@class, 'tec--toolbar__item')"
+                "and contains(., 'Compartilharam')]/text()"
+            ),
+        ),
+        ("comments_count", "//button[@id='js-comments-btn']/text()"),
         (
             "summary",
             (
-                "//div[@class='tec--article__body z--px-16 p402_premium']"
+                "//div[contains(@class, 'tec--article__body')]"
                 "/p[1]/descendant-or-self::*/text()"
             ),
         ),
@@ -46,22 +91,17 @@ def scrape_noticia(html_content):
         query_result = selector.xpath(element[1]).getall()
         is_list = element[0] in ("sources", "categories")
 
-        query_result = (
-            query_result[0].strip()
-            if len(query_result) == 1 and not is_list
-            else query_result
-        )
-
-        if "count" in element[0]:
-            query_result = int(re.sub(r"\D", "", query_result)) or 0
-
-        if element[0] == "summary":
-            query_result = "".join(query_result)
+        if not is_list and "count" not in element[0]:
+            query_result = (
+                query_result[0].strip()
+                if len(query_result) == 1
+                else "".join(query_result).strip()
+            )
 
         if is_list:
             query_result = [x.strip() for x in query_result]
 
-        news_info[element[0]] = query_result
+        news_info[element[0]] = data_cleanup(query_result, element)
 
     return news_info
 
@@ -93,4 +133,25 @@ def scrape_next_page_link(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    all_urls = []
+    all_news = []
+    html = fetch("https://www.tecmundo.com.br/novidades")
+
+    while len(all_urls) < amount:
+        new_urls = scrape_novidades(html)
+        all_urls += new_urls
+
+        if len(all_urls) >= amount:
+            break
+
+        html = fetch(scrape_next_page_link(html))
+
+    all_urls = all_urls[:amount]
+
+    for url in all_urls:
+        html = fetch(url)
+        news_data = scrape_noticia(html)
+        all_news.append(news_data)
+
+    create_news(all_news)
+    return all_news
