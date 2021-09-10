@@ -1,5 +1,15 @@
 from tech_news.database import search_news
 import re
+import datetime
+
+
+def extract_values(all_news):
+    news_data = []
+
+    for news in all_news:
+        news_data.append((news["title"], news["url"]))
+
+    return news_data
 
 
 # Requisito 6
@@ -7,17 +17,22 @@ def search_by_title(title):
     found_news = search_news(
         {"title": re.compile("^" + title + "$", re.IGNORECASE)}
     )
-    news_data = []
 
-    for news in found_news:
-        news_data.append((news["title"], news["url"]))
-
-    return news_data
+    return extract_values(found_news)
 
 
 # Requisito 7
 def search_by_date(date):
-    """Seu código deve vir aqui"""
+    try:
+        datetime.datetime.strptime(date, "%Y-%m-%d")
+    except ValueError:
+        raise ValueError("Data inválida")
+
+    found_news = search_news(
+        {"timestamp": re.compile("^" + date, re.IGNORECASE)}
+    )
+
+    return extract_values(found_news)
 
 
 # Requisito 8
