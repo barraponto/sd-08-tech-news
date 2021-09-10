@@ -5,12 +5,16 @@ import time
 # Requisito 1
 def fetch(url):
     time.sleep(1)
-    request = requests.get(url)
-    if request.status_code == 200:
+    try:
+        request = requests.get(url, timeout=3)
+        if request.status_code != 200:
+            return None
         return request.text
-    return None
+    except requests.Timeout:
+        return None
 
 
+# print(fetch('https://httpbin.org/delay/4'))
 # print(fetch('https://www.tecmundo.com.br/novidades'))
 
 # Requisito 2
