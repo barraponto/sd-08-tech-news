@@ -16,6 +16,7 @@ def search_by_title(title):
 
 # Requisito 7
 def search_by_date(date):
+    
     try:
         datetime.datetime.strptime(date, '%Y-%m-%d')
     except ValueError:
@@ -32,6 +33,7 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
+    
     news = []
     result = search_news({"sources": {"$regex": source, "$options": "i"}})
 
@@ -43,4 +45,11 @@ def search_by_source(source):
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    
+    news = []
+    result = search_news({"categories": {"$regex": category, "$options": "i"}})
+
+    for index in result:
+        news.append((index["title"], index["url"]))
+
+    return news
