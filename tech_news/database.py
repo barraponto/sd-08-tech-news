@@ -37,13 +37,3 @@ def search_news(query):
 
 def get_collection():
     return db.news
-
-
-def aggregate(data):
-    return list(db.news.aggregate(
-        [{'$project': {
-            "title": 1,
-            "url": 1,
-            "timestamp": {'$substr': [data, 0, 2]}
-        }
-        }]))

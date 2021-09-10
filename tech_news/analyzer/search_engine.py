@@ -1,5 +1,6 @@
 from tech_news.database import search_news
 from datetime import datetime
+import re
 
 
 # Requisito 6
@@ -28,7 +29,11 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    db = search_news({"sources": re.compile(source, re.IGNORECASE)})
+    lista = []
+    for item in db:
+        lista = [(item["title"], item["url"])]
+    return lista
 
 
 # Requisito 9
