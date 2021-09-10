@@ -19,12 +19,10 @@ def search_by_date(date):
     except ValueError:
         raise ValueError("Data inválida")
 
-    db = aggregate(date)
+    db = search_news({"timestamp": {"$regex": date}})
     lista = []
     for item in db:
         lista = [(item["title"], item["url"])]
-    print('lista')
-    print(lista)
     return lista
 
 
