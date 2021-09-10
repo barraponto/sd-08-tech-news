@@ -1,5 +1,7 @@
 import requests
 import time
+import re
+from parsel import Selector
 
 
 # Requisito 1
@@ -19,7 +21,49 @@ def fetch(url):
 
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+    news_info = {}
+
+    xpath_queries = [
+        ("url", "//head/link[@rel='canonical']/@href"),
+        ("title", "//h1[@id='js-article-title']/text()"),
+        ("timestamp", "//time[@id='js-article-date']/@datetime"),
+        ("writer", "//a[@class='tec--author__info__link']/text()"),
+        ("shares_count", "//div[@class='tec--toolbar__item'][1]/text()"),
+        ("comments_count", "//button[@id='js-comments-btn']/text()[2]"),
+        (
+            "summary",
+            (
+                "//div[@class='tec--article__body z--px-16 p402_premium']"
+                "/p[1]/descendant-or-self::*/text()"
+            ),
+        ),
+        ("sources", "//h2[text()='Fontes']/following-sibling::div/a/text()"),
+        ("categories", "//div[@id='js-categories']/a/text()"),
+    ]
+
+    for element in xpath_queries:
+        query_result = selector.xpath(element[1]).getall()
+        is_list = element[0] in ("sources", "categories")
+
+        query_result = (
+            query_result[0].strip()
+            if len(query_result) == 1 and not is_list
+            else query_result
+        )
+
+        if "count" in element[0]:
+            query_result = int(re.sub(r"\D", "", query_result)) or 0
+
+        if element[0] == "summary":
+            query_result = "".join(query_result)
+
+        if is_list:
+            query_result = [x.strip() for x in query_result]
+
+        news_info[element[0]] = query_result
+
+    return news_info
 
 
 # Requisito 3
