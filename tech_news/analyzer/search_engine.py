@@ -50,7 +50,7 @@ def search_by_category(category):
     news = db.find_news()
     categories_list = []
     for new in news:
-        for category in new["categories"]:
-            if category.lower() == category.lower():
+        for unity_category in new["categories"]:
+            if unity_category.lower() == category.lower():
                 categories_list.append((new["title"], new["url"]))
     return categories_list
