@@ -22,7 +22,6 @@ def scrape_noticia(html_content):
     sources = [source.strip() for source in sources]
     categories = selector.css('#js-categories a::text').getall()
     categories = [categorie.strip() for categorie in categories]
-
     return {
         "url": selector.css('link[rel=canonical]::attr(href)').get(),
         "title": selector.css('.tec--article__header__title ::text').get(),
@@ -43,9 +42,13 @@ def scrape_noticia(html_content):
 
 # Requisito 3
 def scrape_novidades(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    if selector:
+        urls = selector.css('.tec--card__title__link ::attr(href)').getall()
+        return urls[-20:]
+    return []
 
-
+print (scrape_novidades(fetch('https://www.tecmundo.com.br/novidades')))
 # Requisito 4
 def scrape_next_page_link(html_content):
     """Seu código deve vir aqui"""
