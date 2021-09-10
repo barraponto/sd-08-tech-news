@@ -34,6 +34,7 @@ def search_by_date(date):
       == datetime.strptime(new["timestamp"], "%Y-%m-%dT%H:%M:%S").date()
     ]
 
+
 # Requisito 8
 def search_by_source(source):
     """Seu código deve vir aqui"""
