@@ -1,5 +1,6 @@
 import requests
 import time
+from parsel import Selector
 
 
 # Requisito 1
@@ -14,12 +15,30 @@ def fetch(url):
         return None
 
 
-# print(fetch('https://httpbin.org/delay/4'))
-# print(fetch('https://www.tecmundo.com.br/novidades'))
-
 # Requisito 2
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(text=html_content)
+    sources = selector.css('.z--mb-16 a::text').getall()
+    sources = [source.strip() for source in sources]
+    categories = selector.css('#js-categories a::text').getall()
+    categories = [categorie.strip() for categorie in categories]
+
+    return {
+        "url": selector.css('link[rel=canonical]::attr(href)').get(),
+        "title": selector.css('.tec--article__header__title ::text').get(),
+        "timestamp": selector.css(
+            '.tec--timestamp__item time::attr(datetime)').get(),
+        "writer": selector.css(
+            '.tec--author__info__link ::text').get().strip(),
+        "shares_count": int(selector.css(
+            '.tec--toolbar__item ::text').get().strip()[:1]),
+        "comments_count": int(selector.css(
+            '.tec--toolbar').re_first(r"\d+ Comentários").strip()[:1]),
+        "summary": "".join(selector.css(
+            '.tec--article__body p:first_child ::text').getall()),
+        "sources": sources,
+        "categories": categories,
+    }
 
 
 # Requisito 3
