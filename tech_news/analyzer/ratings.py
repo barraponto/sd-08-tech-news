@@ -1,6 +1,6 @@
 # Requisito 10
 def top_5_news():
-    """Seu código deve vi aqui"""
+    """Seu código deve vir aqui"""
 
 
 # Requisito 11
