@@ -1,4 +1,5 @@
-from tech_news.database import search_news
+from tech_news.database import search_news, aggregate
+from datetime import datetime
 
 
 # Requisito 6
@@ -12,7 +13,19 @@ def search_by_title(titulo):
 
 # Requisito 7
 def search_by_date(date):
-    """Seu código deve vir aqui"""
+    format = "%Y-%m-%d"
+    try:
+        datetime.strptime(date, format)
+    except ValueError:
+        raise ValueError("Data inválida")
+
+    db = aggregate(date)
+    lista = []
+    for item in db:
+        lista = [(item["title"], item["url"])]
+    print('lista')
+    print(lista)
+    return lista
 
 
 # Requisito 8
