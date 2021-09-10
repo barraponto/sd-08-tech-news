@@ -3,6 +3,7 @@ import time
 from parsel import Selector
 from tech_news.database import create_news
 
+
 def get_writer(selector):
     writer = selector.css(
         '.tec--author__info__link::text').get()
@@ -14,6 +15,7 @@ def get_writer(selector):
             '.tec--author__info p::text').get()
     return writer.strip() if writer else None
 
+
 def get_shares_count(selector):
     try:
         return int(
@@ -21,6 +23,7 @@ def get_shares_count(selector):
             .replace("Compartilharam", "").strip())
     except (AttributeError, TypeError):
         return 0
+
 
 def get_comments_count(selector):
     try:
@@ -99,4 +102,3 @@ def get_tech_news(amount):
         links = scrape_novidades(page)
     create_news(news)
     return news
-        
