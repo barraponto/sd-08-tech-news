@@ -38,8 +38,8 @@ def search_by_source(source):
     news = db.find_news()
     source_list = []
     for new in news:
-        for source in new["sources"]:
-            if source.lower() == source.lower():
+        for unity_sorce in new["sources"]:
+            if unity_sorce.lower() == source.lower():
                 source_list.append((new["title"], new["url"]))
     return source_list
 
