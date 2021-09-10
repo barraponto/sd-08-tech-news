@@ -31,7 +31,14 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    """Seu código deve vir aqui"""
+    news = db.find_news()
+    news_list = []
+    for item in news:
+        for src in item["sources"]:
+            if src.lower() == source.lower():
+                content = (item["title"], item["url"])
+                news_list.append(content)
+    return news_list
 
 
 # Requisito 9
