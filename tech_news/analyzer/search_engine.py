@@ -4,10 +4,10 @@ import tech_news.database as db
 
 # Requisito 6
 def search_by_title(title):
-    query_1 = db.search_news({"title": {"$regex": title, "$options": "i"}})
+    query = db.search_news({"title": {"$regex": title, "$options": "i"}})
     results = []
 
-    for value in query_1:
+    for value in query:
         results.append(((value["title"], value["url"])))
 
     return results
@@ -20,10 +20,10 @@ def search_by_date(date):
     except ValueError:
         raise ValueError("Data inválida")
 
-    query_2 = db.search_news({"timestamp": {"$regex": date}})
+    query = db.search_news({"timestamp": {"$regex": date}})
     results = []
 
-    for value in query_2:
+    for value in query:
         results.append((value["title"], value["url"]))
 
     return results
@@ -31,10 +31,10 @@ def search_by_date(date):
 
 # Requisito 8
 def search_by_source(source):
-    query_1 = db.search_news({"sources": {"$regex": source, "$options": "i"}})
+    query = db.search_news({"sources": {"$regex": source, "$options": "i"}})
     results = []
 
-    for value in query_1:
+    for value in query:
         results.append(((value["title"], value["url"])))
 
     return results
@@ -42,10 +42,10 @@ def search_by_source(source):
 
 # Requisito 9
 def search_by_category(category):
-    query_1 = db.search_news({"categories": {"$regex": category, "$options": "i"}})
+    query = db.search_news({"categories": {"$regex": category, "$options": "i"}})
     results = []
 
-    for value in query_1:
+    for value in query:
         results.append(((value["title"], value["url"])))
 
     return results
