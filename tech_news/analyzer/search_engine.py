@@ -42,7 +42,9 @@ def search_by_source(source):
 
 # Requisito 9
 def search_by_category(category):
-    query = db.search_news({"categories": {"$regex": category, "$options": "i"}})
+    query = db.search_news(
+        {"categories": {"$regex": category, "$options": "i"}}
+    )
     results = []
 
     for value in query:
