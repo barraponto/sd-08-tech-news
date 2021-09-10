@@ -23,20 +23,17 @@ def top_5_news():
         top_five.append((news_sorted[m][1], news_sorted[m][2]))
         n -= 1
         m += 1
-        print(n)
-    print(top_five)
     return top_five
 
 
 # Requisito 11
 def top_5_categories():
-    """Seu código deve vir aqui"""
-
-
-"""
-    https://www.hashtagtreinamentos.com/funcoes-lambda-python?gclid=
-    Cj0KCQjwm9yJBhDTARIsABKIcGbH4I8i4OseGDNaWNY8jP4AWzT8kAEHxYJqnvkf0B6PrRuCLyK6_bcaAtzEEALw_wcB
-    https://www.kite.com/python/answers/how-to-sort-a-%60counter%60-object-by-count-in-python
-    https://docs.python.org/pt-br/3/howto/sorting.html
-    https://programadorviking.com.br/sorted-python-3-formas-incriveis-de-ordenar-listas-em-python/
-"""
+    categories = []
+    news = find_news()
+    if len(news) == 0:
+        return []
+    for new in news:
+        categories += (new['categories'])
+    print(categories)
+    sorted_categories = sorted(categories)
+    return sorted_categories[:5]

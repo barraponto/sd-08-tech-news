@@ -22,7 +22,24 @@ ou
     # writer = selector.css(".tec--author__info__link::text").get()
     # return writer.strip()
 
+"""
+    https://www.hashtagtreinamentos.com/funcoes-lambda-python?gclid=
+    Cj0KCQjwm9yJBhDTARIsABKIcGbH4I8i4OseGDNaWNY8jP4AWzT8kAEHxYJqnvkf0B6PrRuCLyK6_bcaAtzEEALw_wcB
 
+    https://www.kite.com/python/answers/how-to-sort-a-%60counter%60-object-by-count-in-python
+
+    https://docs.python.org/pt-br/3/howto/sorting.html
+
+    https://programadorviking.com.br/sorted-python-3-formas-incriveis-de-ordenar-listas-em-python/
+
+    .append() x .extend()
+    https://www.datacamp.com/community/tutorials/python-list-methods?utm_source=adwords_ppc&utm_campaignid=
+    1455363063&utm_adgroupid=65083631748&utm_device=c&utm_keyword=&utm_matchtype=b&utm_network=
+    g&utm_adpostion=&utm_creative=278443377095&utm_targetid=aud-392016246653:dsa-429603003980&utm_loc_interest_ms=
+    &utm_loc_physical_ms=1031890&gclid=CjwKCAjwvuGJBhB1EiwACU1Aibsti4ueo81plncEfbLOhoB2vchQNOqbDeHNq_SwrkhM8dCoozuuUhoCa5oQAvD_BwE
+
+https://www.devmedia.com.br/colecoes-no-python-listas-tuplas-e-dicionarios/40678
+"""
 
 ; def get_tech_news(amount):
 ;     tech_news = []
