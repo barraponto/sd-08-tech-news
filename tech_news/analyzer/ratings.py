@@ -29,6 +29,7 @@ def top_5_news():
     return top_five
 # referência: Aluna Rita Jeveax
 
+
 # Requisito 11
 def top_5_categories():
     """Seu código deve vir aqui"""
