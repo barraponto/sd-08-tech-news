@@ -1,6 +1,18 @@
+from tech_news.database import search_news
+import re
+
+
 # Requisito 6
 def search_by_title(title):
-    """Seu código deve vir aqui"""
+    found_news = search_news(
+        {"title": re.compile("^" + title + "$", re.IGNORECASE)}
+    )
+    news_data = []
+
+    for news in found_news:
+        news_data.append((news["title"], news["url"]))
+
+    return news_data
 
 
 # Requisito 7
