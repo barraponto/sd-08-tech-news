@@ -34,6 +34,5 @@ def top_5_categories():
         return []
     for new in news:
         categories += (new['categories'])
-    print(categories)
     sorted_categories = sorted(categories)
     return sorted_categories[:5]
